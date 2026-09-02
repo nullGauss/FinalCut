@@ -3,6 +3,11 @@
         <div class="flex items-center gap-4">
             <a href="{{ route('admin.transactions.index') }}" class="btn btn-outline btn-sm">&larr; Kembali</a>
             <h1 class="font-display font-bold text-2xl text-ink">Detail Transaksi #{{ $booking->id }}</h1>
+            @if ($booking->status === 'paid')
+                <a href="{{ route('bookings.print', $booking) }}" target="_blank" class="btn btn-primary btn-sm ml-auto">
+                    Cetak Tiket
+                </a>
+            @endif
         </div>
     </x-slot>
 

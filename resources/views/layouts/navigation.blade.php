@@ -11,15 +11,12 @@
 
                 <!-- Nav Links -->
                 <div class="hidden sm:flex items-center gap-6">
-                    <a href="{{ route('dashboard') }}"
-                       class="text-sm font-medium {{ request()->routeIs('dashboard') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
-                        Dashboard
-                    </a>
-                    <a href="{{ route('movies.index') }}"
-                       class="text-sm font-medium {{ request()->routeIs('movies.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
-                        Browse Film
-                    </a>
                     @if (auth()->user()->role === 'admin')
+                        <!-- Admin Navigation -->
+                        <a href="{{ route('admin.dashboard') }}"
+                           class="text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                            Dashboard
+                        </a>
                         <a href="{{ route('admin.movies.index') }}"
                            class="text-sm font-medium {{ request()->routeIs('admin.movies.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
                             Kelola Film
@@ -43,6 +40,24 @@
                         <a href="{{ route('admin.users.index') }}"
                            class="text-sm font-medium {{ request()->routeIs('admin.users.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
                             Kelola User
+                        </a>
+                    @else
+                        <!-- User Navigation -->
+                        <a href="{{ route('dashboard') }}"
+                           class="text-sm font-medium {{ request()->routeIs('dashboard') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                            Dashboard
+                        </a>
+                        <a href="{{ route('movies.index') }}"
+                           class="text-sm font-medium {{ request()->routeIs('movies.index') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                            Browse Film
+                        </a>
+                        <a href="{{ route('movies.nowShowing') }}"
+                           class="text-sm font-medium {{ request()->routeIs('movies.nowShowing') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                            Sedang Tayang
+                        </a>
+                        <a href="{{ route('bookings.history') }}"
+                           class="text-sm font-medium {{ request()->routeIs('bookings.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                            Riwayat
                         </a>
                     @endif
                 </div>
@@ -91,15 +106,21 @@
     <!-- Mobile Navigation -->
     <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden border-t border-ink">
         <div class="section py-4 space-y-2">
-            <a href="{{ route('dashboard') }}" class="block text-sm font-medium text-ink">Dashboard</a>
-            <a href="{{ route('movies.index') }}" class="block text-sm font-medium text-ink">Browse Film</a>
             @if (auth()->user()->role === 'admin')
+                <!-- Admin Mobile Navigation -->
+                <a href="{{ route('admin.dashboard') }}" class="block text-sm font-medium text-ink">Dashboard</a>
                 <a href="{{ route('admin.movies.index') }}" class="block text-sm font-medium text-ink">Kelola Film</a>
                 <a href="{{ route('admin.cinemas.index') }}" class="block text-sm font-medium text-ink">Kelola Bioskop</a>
                 <a href="{{ route('admin.showtimes.index') }}" class="block text-sm font-medium text-ink">Jadwal Tayang</a>
                 <a href="{{ route('admin.transactions.index') }}" class="block text-sm font-medium text-ink">Transaksi</a>
                 <a href="{{ route('admin.reports.index') }}" class="block text-sm font-medium text-ink">Laporan</a>
                 <a href="{{ route('admin.users.index') }}" class="block text-sm font-medium text-ink">Kelola User</a>
+            @else
+                <!-- User Mobile Navigation -->
+                <a href="{{ route('dashboard') }}" class="block text-sm font-medium text-ink">Dashboard</a>
+                <a href="{{ route('movies.index') }}" class="block text-sm font-medium text-ink">Browse Film</a>
+                <a href="{{ route('movies.nowShowing') }}" class="block text-sm font-medium text-ink">Sedang Tayang</a>
+                <a href="{{ route('bookings.history') }}" class="block text-sm font-medium text-ink">Riwayat</a>
             @endif
         </div>
         <div class="section py-4 border-t border-ink">

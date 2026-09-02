@@ -75,9 +75,11 @@
 
                         <!-- Action Buttons -->
                         <div class="flex flex-wrap gap-3 mt-8 pt-6 border-t border-gray-200">
-                            <a href="#" class="btn btn-primary" onclick="alert('Fitur Booking dikerjakan di Minggu 4-5')">
-                                Booking Tiket
-                            </a>
+                            @if ($hasShowtimes)
+                                <a href="{{ route('bookings.selectShowtime', $movie) }}" class="btn btn-primary">
+                                    Pesan Tiket
+                                </a>
+                            @endif
                             <button class="btn btn-outline" onclick="alert('Fitur Watchlist dikerjakan di Minggu 7')">
                                 + Watchlist
                             </button>
@@ -90,14 +92,25 @@
                     <div class="card p-6">
                         <h3 class="font-display font-bold text-xl text-ink mb-4">Trailer</h3>
                         <div class="aspect-video w-full rounded-md overflow-hidden border-1.5 border-ink bg-black">
-                            <!-- Simulating trailer for now, as proper iframe embed requires processing the YouTube URL -->
-                            <div class="w-full h-full flex flex-col items-center justify-center text-white">
-                                <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <a href="{{ $movie->trailer_url }}" target="_blank" class="text-sm underline hover:text-gray-300">Tonton di YouTube</a>
-                            </div>
+                            @php
+                                $videoId = null;
+                                $url = $movie->trailer_url;
+                                if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/', $url, $matches)) {
+                                    $videoId = $matches[1];
+                                }
+                            @endphp
+                            @if ($videoId)
+                                <iframe src="https://www.youtube.com/embed/{{ $videoId }}"
+                                        class="w-full h-full"
+                                        frameborder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen>
+                                </iframe>
+                            @else
+                                <div class="w-full h-full flex flex-col items-center justify-center text-white">
+                                    <a href="{{ $movie->trailer_url }}" target="_blank" class="text-sm underline hover:text-gray-300">Tonton di YouTube</a>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 @endif

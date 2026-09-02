@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h1 class="font-display font-bold text-2xl text-ink">Daftar Film</h1>
+        <h1 class="font-display font-bold text-2xl text-ink">Sedang Tayang</h1>
     </x-slot>
 
     <div class="section">
@@ -24,7 +24,7 @@
         <!-- Movie Grid -->
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @forelse ($movies as $movie)
-                <a href="{{ route('movies.show', $movie) }}" class="group block">
+                <a href="{{ route('bookings.selectShowtime', $movie) }}" class="group block">
                     <!-- Poster -->
                     <div class="aspect-[2/3] w-full card mb-4 overflow-hidden relative">
                         @if ($movie->poster)
@@ -37,22 +37,20 @@
                             </div>
                         @endif
 
+                        <!-- Badge: Now Showing (pojok kiri bawah) -->
+                        <div class="absolute bottom-2 left-2">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-green-600 text-white text-[10px] font-bold rounded shadow-hard-sm">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                                </svg>
+                                Tayang
+                            </span>
+                        </div>
+
                         <!-- Rating Badge (Umur) -->
                         <div class="absolute top-2 right-2">
                             <span class="badge-yellow shadow-hard-sm">{{ $movie->rating_umur }}</span>
                         </div>
-
-                        <!-- Badge: Now Showing (pojok kiri bawah) -->
-                        @if (in_array($movie->id, $nowShowingMovieIds))
-                            <div class="absolute bottom-2 left-2">
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-green-600 text-white text-[10px] font-bold rounded shadow-hard-sm">
-                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
-                                    </svg>
-                                    Tayang
-                                </span>
-                            </div>
-                        @endif
                     </div>
 
                     <!-- Info -->
@@ -72,7 +70,8 @@
                 </a>
             @empty
                 <div class="col-span-full card p-12 text-center">
-                    <p class="text-ink-secondary text-lg">Film tidak ditemukan.</p>
+                    <p class="text-ink-secondary text-lg">Tidak ada film yang sedang tayang.</p>
+                    <a href="{{ route('movies.index') }}" class="btn btn-outline btn-sm mt-4">Lihat Semua Film</a>
                 </div>
             @endforelse
         </div>

@@ -30,4 +30,9 @@ class Movie extends Model
     {
         return $this->hasMany(Review::class)->latest();
     }
+
+    public function showtimes()
+    {
+        return $this->hasMany(Showtime::class);
+    }
 }

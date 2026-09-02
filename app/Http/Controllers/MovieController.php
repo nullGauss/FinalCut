@@ -29,7 +29,45 @@ class MovieController extends Controller
         $movies = $query->latest()->paginate(12)->withQueryString();
         $genres = Genre::all();
 
-        return view('movies.index', compact('movies', 'genres'));
+        $nowShowingMovieIds = \App\Models\Showtime::where('show_date', '>=', now()->toDateString())
+            ->pluck('movie_id')
+            ->unique()
+            ->toArray();
+
+        return view('movies.index', compact('movies', 'genres', 'nowShowingMovieIds'));
+    }
+
+    public function nowShowing(Request $request)
+    {
+        $query = Movie::with('genres')
+            ->whereHas('showtimes', function ($q) {
+                $q->where('show_date', '>=', now()->toDateString());
+            })
+            ->withCount(['showtimes as active_showtimes_count' => function ($q) {
+                $q->where('show_date', '>=', now()->toDateString());
+            }]);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('director', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('genre')) {
+            $query->whereHas('genres', function ($q) use ($request) {
+                $q->where('genres.id', $request->genre);
+            });
+        }
+
+        $movies = $query->orderBy('active_showtimes_count', 'desc')
+                        ->latest()
+                        ->paginate(12)
+                        ->withQueryString();
+        $genres = Genre::all();
+
+        return view('movies.now-showing', compact('movies', 'genres'));
     }
 
     public function show(Movie $movie)
@@ -39,6 +77,10 @@ class MovieController extends Controller
         $avgRating = $movie->reviews()->avg('rating');
         $reviewCount = $movie->reviews()->count();
 
-        return view('movies.show', compact('movie', 'avgRating', 'reviewCount'));
+        $hasShowtimes = $movie->showtimes()
+            ->where('show_date', '>=', now()->toDateString())
+            ->exists();
+
+        return view('movies.show', compact('movie', 'avgRating', 'reviewCount', 'hasShowtimes'));
     }
 }

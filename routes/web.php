@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ShowtimeController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
@@ -75,11 +76,23 @@ Route::middleware('auth')->group(function () {
 
     // Daftar Film (Sesuai B_Flow.md, hanya yang login bisa akses)
     Route::get('/movies', [MovieController::class, 'index'])->name('movies.index');
+    Route::get('/now-showing', [MovieController::class, 'nowShowing'])->name('movies.nowShowing');
     Route::get('/movies/{movie}', [MovieController::class, 'show'])->name('movies.show');
 
     // Ulasan
     Route::post('/movies/{movie}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    // Booking
+    Route::get('/movies/{movie}/book', [BookingController::class, 'selectShowtime'])->name('bookings.selectShowtime');
+    Route::get('/bookings/{showtime}/seats', [BookingController::class, 'selectSeats'])->name('bookings.selectSeats');
+    Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
+    Route::get('/bookings/{booking}/checkout', [BookingController::class, 'checkout'])->name('bookings.checkout');
+    Route::put('/bookings/{booking}/pay', [BookingController::class, 'pay'])->name('bookings.pay');
+    Route::put('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
+    Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
+    Route::get('/bookings/{booking}/print', [BookingController::class, 'print'])->name('bookings.print');
+    Route::get('/riwayat', [BookingController::class, 'history'])->name('bookings.history');
 });
 
 require __DIR__.'/auth.php';
