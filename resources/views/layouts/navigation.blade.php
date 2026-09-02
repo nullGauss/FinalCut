@@ -15,6 +15,10 @@
                        class="text-sm font-medium {{ request()->routeIs('dashboard') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
                         Dashboard
                     </a>
+                    <a href="{{ route('movies.index') }}"
+                       class="text-sm font-medium {{ request()->routeIs('movies.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                        Browse Film
+                    </a>
                     @if (auth()->user()->role === 'admin')
                         <a href="{{ route('admin.movies.index') }}"
                            class="text-sm font-medium {{ request()->routeIs('admin.movies.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
@@ -68,6 +72,7 @@
     <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden border-t border-ink">
         <div class="section py-4 space-y-2">
             <a href="{{ route('dashboard') }}" class="block text-sm font-medium text-ink">Dashboard</a>
+            <a href="{{ route('movies.index') }}" class="block text-sm font-medium text-ink">Browse Film</a>
             @if (auth()->user()->role === 'admin')
                 <a href="{{ route('admin.movies.index') }}" class="block text-sm font-medium text-ink">Kelola Film</a>
             @endif

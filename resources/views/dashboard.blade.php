@@ -22,7 +22,7 @@
         <h3 class="font-display font-bold text-lg text-ink mb-4">Menu Cepat</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <!-- Browse Film -->
-            <a href="#" class="card p-6 hover:shadow-hard-lg transition-all group">
+            <a href="{{ route('movies.index') }}" class="card p-6 hover:shadow-hard-lg transition-all group">
                 <div class="w-10 h-10 bg-blue-bg text-blue-text rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
