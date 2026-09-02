@@ -28,7 +28,9 @@
                     <!-- Poster -->
                     <div class="aspect-[2/3] w-full card mb-4 overflow-hidden relative">
                         @if ($movie->poster)
-                            <img src="{{ $movie->poster }}" alt="{{ $movie->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            <img src="{{ $movie->poster }}" alt="{{ $movie->title }}" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                 onerror="this.outerHTML='<div class=\'w-full h-full poster-placeholder flex items-center justify-center bg-gray-100 group-hover:scale-105 transition-transform duration-300\'><span class=\'font-display font-bold text-2xl text-gray-300 transform -rotate-45\'>FinalCut</span></div>'">
                         @else
                             <div class="w-full h-full poster-placeholder flex items-center justify-center bg-gray-100 group-hover:scale-105 transition-transform duration-300">
                                 <span class="font-display font-bold text-2xl text-gray-300 transform -rotate-45">FinalCut</span>

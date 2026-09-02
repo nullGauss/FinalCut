@@ -30,7 +30,9 @@
                     <div class="w-full sm:w-48 shrink-0">
                         <div class="aspect-[2/3] w-full border-1.5 border-ink shadow-hard-sm rounded-md overflow-hidden relative">
                             @if ($movie->poster)
-                                <img src="{{ $movie->poster }}" alt="{{ $movie->title }}" class="w-full h-full object-cover">
+                                <img src="{{ $movie->poster }}" alt="{{ $movie->title }}" 
+                                     class="w-full h-full object-cover"
+                                     onerror="this.outerHTML='<div class=\'w-full h-full poster-placeholder flex items-center justify-center bg-gray-100\'><span class=\'font-display font-bold text-xl text-gray-300 transform -rotate-45\'>FinalCut</span></div>'">
                             @else
                                 <div class="w-full h-full poster-placeholder flex items-center justify-center bg-gray-100">
                                     <span class="font-display font-bold text-xl text-gray-300 transform -rotate-45">FinalCut</span>

@@ -24,6 +24,22 @@
                            class="text-sm font-medium {{ request()->routeIs('admin.movies.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
                             Kelola Film
                         </a>
+                        <a href="{{ route('admin.cinemas.index') }}"
+                           class="text-sm font-medium {{ request()->routeIs('admin.cinemas.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                            Kelola Bioskop
+                        </a>
+                        <a href="{{ route('admin.showtimes.index') }}"
+                           class="text-sm font-medium {{ request()->routeIs('admin.showtimes.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                            Jadwal Tayang
+                        </a>
+                        <a href="{{ route('admin.transactions.index') }}"
+                           class="text-sm font-medium {{ request()->routeIs('admin.transactions.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                            Transaksi
+                        </a>
+                        <a href="{{ route('admin.reports.index') }}"
+                           class="text-sm font-medium {{ request()->routeIs('admin.reports.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                            Laporan
+                        </a>
                     @endif
                 </div>
             </div>
@@ -75,6 +91,10 @@
             <a href="{{ route('movies.index') }}" class="block text-sm font-medium text-ink">Browse Film</a>
             @if (auth()->user()->role === 'admin')
                 <a href="{{ route('admin.movies.index') }}" class="block text-sm font-medium text-ink">Kelola Film</a>
+                <a href="{{ route('admin.cinemas.index') }}" class="block text-sm font-medium text-ink">Kelola Bioskop</a>
+                <a href="{{ route('admin.showtimes.index') }}" class="block text-sm font-medium text-ink">Jadwal Tayang</a>
+                <a href="{{ route('admin.transactions.index') }}" class="block text-sm font-medium text-ink">Transaksi</a>
+                <a href="{{ route('admin.reports.index') }}" class="block text-sm font-medium text-ink">Laporan</a>
             @endif
         </div>
         <div class="section py-4 border-t border-ink">
