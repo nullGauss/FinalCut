@@ -38,9 +38,17 @@
                         @endforeach
                     </select>
                 </div>
+                <div class="flex-1">
+                    <label class="block text-xs font-bold text-ink-secondary mb-1">Status</label>
+                    <select name="status" class="input py-1.5 text-sm">
+                        <option value="all" {{ request('status') == 'all' || !request('status') ? 'selected' : '' }}>Semua Status</option>
+                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif (Tayang)</option>
+                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Nonaktif (Selesai)</option>
+                    </select>
+                </div>
                 <div class="flex items-end">
                     <button type="submit" class="btn btn-outline btn-sm h-[34px]">Filter</button>
-                    @if(request('date') || request('cinema'))
+                    @if(request('date') || request('cinema') || request('status'))
                         <a href="{{ route('admin.showtimes.index') }}" class="ml-2 text-sm text-blue-text hover:underline mb-2">Reset</a>
                     @endif
                 </div>
@@ -56,13 +64,14 @@
                             <th class="text-left px-4 py-3 font-display font-bold text-ink">Tanggal & Waktu</th>
                             <th class="text-left px-4 py-3 font-display font-bold text-ink">Film</th>
                             <th class="text-left px-4 py-3 font-display font-bold text-ink">Bioskop / Studio</th>
+                            <th class="text-center px-4 py-3 font-display font-bold text-ink">Status</th>
                             <th class="text-right px-4 py-3 font-display font-bold text-ink">Harga Tiket</th>
                             <th class="text-right px-4 py-3 font-display font-bold text-ink">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($showtimes as $show)
-                            <tr class="border-b border-gray-200 hover:bg-background transition-colors">
+                            <tr class="border-b border-gray-200 hover:bg-background transition-colors {{ !$show->is_active ? 'opacity-60' : '' }}">
                                 <td class="px-4 py-3">
                                     <div class="font-medium text-ink">{{ $show->show_date->format('d M Y') }}</div>
                                     <div class="text-ink-secondary">{{ \Carbon\Carbon::parse($show->show_time)->format('H:i') }} WIB</div>
@@ -75,23 +84,41 @@
                                     <div class="text-ink">{{ $show->studio->cinema->name }}</div>
                                     <div class="text-xs text-ink-secondary">{{ $show->studio->name }}</div>
                                 </td>
+                                <td class="px-4 py-3 text-center">
+                                    @if ($show->is_active)
+                                        <span class="badge-green">Aktif</span>
+                                    @else
+                                        <span class="badge-red">Selesai</span>
+                                    @endif
+                                </td>
                                 <td class="px-4 py-3 text-right font-medium text-ink">
                                     Rp {{ number_format($show->price, 0, ',', '.') }}
                                 </td>
                                 <td class="px-4 py-3 text-right">
                                     <div class="flex items-center justify-end gap-2">
                                         <button onclick="openModal('edit', {{ $show->id }})" class="btn btn-outline btn-sm">Edit</button>
-                                        <form method="POST" action="{{ route('admin.showtimes.destroy', $show) }}" onsubmit="return confirm('Hapus jadwal ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm border-red-600 text-red-600 hover:bg-red-600 hover:text-white">Hapus</button>
-                                        </form>
+                                        @if ($show->is_active)
+                                            <button onclick="openDeactivateModal({{ $show->id }})" class="btn btn-sm border-yellow-text text-yellow-text hover:bg-yellow-bg">
+                                                Selesai
+                                            </button>
+                                        @else
+                                            <form method="POST" action="{{ route('admin.showtimes.toggleActive', $show) }}" class="inline">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-sm border-green-600 text-green-600 hover:bg-green-50">
+                                                    Aktifkan
+                                                </button>
+                                            </form>
+                                        @endif
+                                        <button onclick="openDeleteModal({{ $show->id }})" class="btn btn-sm border-red-600 text-red-600 hover:bg-red-600 hover:text-white">
+                                            Hapus
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-4 py-12 text-center text-ink-secondary">
+                                <td colspan="6" class="px-4 py-12 text-center text-ink-secondary">
                                     Tidak ada jadwal tayang ditemukan.
                                 </td>
                             </tr>
@@ -171,6 +198,54 @@
         </div>
     </div>
 
+    <!-- Modal Konfirmasi Nonaktifkan -->
+    <div id="deactivateModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-ink/50" onclick="closeDeactivateModal()"></div>
+        <div class="absolute inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-sm bg-surface border-1.5 border-ink shadow-hard-lg rounded-xl overflow-hidden">
+            <div class="p-6 text-center">
+                <div class="w-14 h-14 bg-yellow-bg text-yellow-text rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                </div>
+                <h3 class="font-display font-bold text-xl text-ink mb-2">Nonaktifkan Jadwal?</h3>
+                <p class="text-ink-secondary text-sm mb-6">Film tidak akan tayang lagi, namun riwayat booking tetap tersimpan.</p>
+                <div class="flex gap-3">
+                    <button onclick="closeDeactivateModal()" class="btn btn-outline btn-sm flex-1">Batal</button>
+                    <form id="deactivateForm" method="POST" class="flex-1">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" class="btn btn-sm w-full justify-center border-yellow-text text-yellow-text hover:bg-yellow-bg">Ya, Nonaktifkan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Hapus -->
+    <div id="deleteModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-ink/50" onclick="closeDeleteModal()"></div>
+        <div class="absolute inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-sm bg-surface border-1.5 border-ink shadow-hard-lg rounded-xl overflow-hidden">
+            <div class="p-6 text-center">
+                <div class="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </div>
+                <h3 class="font-display font-bold text-xl text-ink mb-2">Hapus Jadwal?</h3>
+                <p class="text-ink-secondary text-sm mb-6">Data jadwal dan riwayat booking terkait akan dihapus permanen.</p>
+                <div class="flex gap-3">
+                    <button onclick="closeDeleteModal()" class="btn btn-outline btn-sm flex-1">Batal</button>
+                    <form id="deleteForm" method="POST" class="flex-1">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm w-full justify-center border-red-600 text-red-600 hover:bg-red-600 hover:text-white">Ya, Hapus</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
     <script>
         function openModal(mode, id = null) {
@@ -196,11 +271,9 @@
                         document.getElementById('movie_id').value = data.movie_id || '';
                         document.getElementById('studio_id').value = data.studio_id || '';
                         
-                        // Extract only date string if it comes with time
                         const dateVal = data.show_date.split('T')[0];
                         document.getElementById('show_date').value = dateVal || '';
                         
-                        // Extract HH:mm from time string
                         const timeVal = data.show_time.substring(0, 5);
                         document.getElementById('show_time').value = timeVal || '';
                         
@@ -214,6 +287,30 @@
 
         function closeModal() {
             document.getElementById('showModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function openDeactivateModal(id) {
+            const form = document.getElementById('deactivateForm');
+            form.action = `/admin/showtimes/${id}/toggle-active`;
+            document.getElementById('deactivateModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDeactivateModal() {
+            document.getElementById('deactivateModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function openDeleteModal(id) {
+            const form = document.getElementById('deleteForm');
+            form.action = `/admin/showtimes/${id}`;
+            document.getElementById('deleteModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
             document.body.style.overflow = '';
         }
     </script>

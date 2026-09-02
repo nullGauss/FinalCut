@@ -81,7 +81,7 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-ink-secondary">Kursi</span>
-                        <span class="font-medium text-ink">{{ $booking->seats->pluck('seat_number')->implode(', ') }}</span>
+                        <span class="font-medium text-ink">{{ $booking->seats->pluck('seat_number')->map(fn($num, $key) => $num . '(' . strtoupper($booking->seats[$key]->seat_type) . ')')->implode(', ') }}</span>
                     </div>
                     @if ($booking->payment)
                         <div class="flex justify-between">

@@ -50,6 +50,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/showtimes/{showtime}/edit', [ShowtimeController::class, 'edit'])->name('showtimes.edit');
     Route::put('/showtimes/{showtime}', [ShowtimeController::class, 'update'])->name('showtimes.update');
     Route::delete('/showtimes/{showtime}', [ShowtimeController::class, 'destroy'])->name('showtimes.destroy');
+    Route::put('/showtimes/{showtime}/toggle-active', [ShowtimeController::class, 'toggleActive'])->name('showtimes.toggleActive');
 
     // Kelola Transaksi
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');

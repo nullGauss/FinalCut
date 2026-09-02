@@ -131,7 +131,7 @@
             </div>
             <div class="ticket-row">
                 <span class="ticket-label">Kursi</span>
-                <span class="ticket-value">{{ $booking->seats->pluck('seat_number')->implode(', ') }}</span>
+                <span class="ticket-value">{{ $booking->seats->pluck('seat_number')->map(fn($num, $key) => $num . '(' . strtoupper($booking->seats[$key]->seat_type) . ')')->implode(', ') }}</span>
             </div>
             <div class="ticket-row">
                 <span class="ticket-label">Metode Bayar</span>

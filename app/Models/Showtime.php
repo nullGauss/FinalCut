@@ -17,10 +17,12 @@ class Showtime extends Model
         'show_date',
         'show_time',
         'price',
+        'is_active',
     ];
 
     protected $casts = [
         'show_date' => 'date',
+        'is_active' => 'boolean',
     ];
 
     public function movie()

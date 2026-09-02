@@ -24,6 +24,10 @@ class ShowtimeController extends Controller
             });
         }
 
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('is_active', $request->status === 'active');
+        }
+
         $showtimes = $query->orderBy('show_date', 'desc')
                            ->orderBy('show_time', 'asc')
                            ->paginate(15)
@@ -45,8 +49,7 @@ class ShowtimeController extends Controller
             'price' => 'required|numeric|min:0',
         ]);
 
-        // Opsional: Validasi jadwal bentrok (bentrok jam di studio yang sama pada hari yang sama)
-        // Untuk mempercepat tugas, kita pasang logic dasar dulu.
+        $validated['is_active'] = true;
 
         Showtime::create($validated);
 
@@ -69,12 +72,19 @@ class ShowtimeController extends Controller
             'price' => 'required|numeric|min:0',
         ]);
 
-        // Memastikan format time hanya H:i jika dikirim ada detik H:i:s
         $validated['show_time'] = \Carbon\Carbon::parse($validated['show_time'])->format('H:i');
 
         $showtime->update($validated);
 
         return redirect()->route('admin.showtimes.index')->with('success', 'Jadwal tayang berhasil diperbarui.');
+    }
+
+    public function toggleActive(Showtime $showtime)
+    {
+        $showtime->update(['is_active' => !$showtime->is_active]);
+
+        $status = $showtime->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        return redirect()->route('admin.showtimes.index')->with('success', "Jadwal tayang {$status}.");
     }
 
     public function destroy(Showtime $showtime)

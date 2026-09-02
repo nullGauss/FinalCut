@@ -18,6 +18,7 @@ class BookingController extends Controller
         $showtimes = Showtime::with(['studio.cinema'])
             ->where('movie_id', $movie->id)
             ->where('show_date', '>=', now()->toDateString())
+            ->where('is_active', true)
             ->orderBy('show_date', 'asc')
             ->orderBy('show_time', 'asc')
             ->get()
@@ -30,6 +31,11 @@ class BookingController extends Controller
 
     public function selectSeats(Showtime $showtime)
     {
+        if (!$showtime->is_active) {
+            return redirect()->route('bookings.selectShowtime', $showtime->movie)
+                             ->with('error', 'Jadwal tayang ini sudah tidak tersedia.');
+        }
+
         $showtime->load(['movie', 'studio.cinema', 'studio.seats']);
 
         $studio = $showtime->studio;
@@ -60,6 +66,11 @@ class BookingController extends Controller
         ]);
 
         $showtime = Showtime::findOrFail($validated['showtime_id']);
+
+        if (!$showtime->is_active) {
+            return back()->withErrors(['showtime_id' => 'Jadwal tayang ini sudah tidak tersedia.']);
+        }
+
         $seatIds = array_filter(explode(',', $validated['seat_ids']));
 
         if (empty($seatIds)) {
@@ -74,7 +85,13 @@ class BookingController extends Controller
             return back()->withErrors(['seat_ids' => 'Ada kursi yang tidak valid.']);
         }
 
-        $totalPrice = $seats->count() * $showtime->price;
+        $totalPrice = 0;
+        foreach ($seats as $seat) {
+            $seatPrice = $seat->seat_type === 'vip'
+                ? $showtime->price * 1.25
+                : $showtime->price;
+            $totalPrice += $seatPrice;
+        }
 
         $booking = Booking::create([
             'user_id' => auth()->id(),

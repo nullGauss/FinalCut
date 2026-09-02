@@ -87,15 +87,26 @@
                     @if ($booking->seats->count() > 0)
                         <div class="flex flex-wrap gap-2">
                             @foreach ($booking->seats as $seat)
-                                <span class="badge-blue text-sm">
+                                <span class="{{ $seat->seat_type === 'vip' ? 'badge-yellow' : 'badge-blue' }} text-sm">
                                     {{ $seat->seat_number }}
                                     ({{ strtoupper($seat->seat_type) }})
                                 </span>
                             @endforeach
                         </div>
-                        <p class="text-xs text-ink-secondary mt-3">
-                            {{ $booking->seats->count() }} kursi x Rp {{ number_format($booking->showtime->price, 0, ',', '.') }}
-                        </p>
+                        @php
+                            $regulerSeats = $booking->seats->where('seat_type', 'reguler');
+                            $vipSeats = $booking->seats->where('seat_type', 'vip');
+                            $basePrice = $booking->showtime->price;
+                            $vipPrice = $basePrice * 1.25;
+                        @endphp
+                        <div class="text-xs text-ink-secondary mt-3 space-y-1">
+                            @if ($regulerSeats->count() > 0)
+                                <div>Reguler: {{ $regulerSeats->count() }} kursi x Rp {{ number_format($basePrice, 0, ',', '.') }}</div>
+                            @endif
+                            @if ($vipSeats->count() > 0)
+                                <div>VIP: {{ $vipSeats->count() }} kursi x Rp {{ number_format($vipPrice, 0, ',', '.') }}</div>
+                            @endif
+                        </div>
                     @else
                         <p class="text-ink-secondary text-sm">Tidak ada data kursi.</p>
                     @endif

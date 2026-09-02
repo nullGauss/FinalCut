@@ -56,15 +56,12 @@
                     <h3 class="font-display font-bold text-lg text-ink mb-4">Kursi Dipilih</h3>
                     <div class="flex flex-wrap gap-2">
                         @foreach ($booking->seats as $seat)
-                            <span class="badge-blue">
+                            <span class="{{ $seat->seat_type === 'vip' ? 'badge-yellow' : 'badge-blue' }}">
                                 {{ $seat->seat_number }}
                                 ({{ strtoupper($seat->seat_type) }})
                             </span>
                         @endforeach
                     </div>
-                    <p class="text-xs text-ink-secondary mt-3">
-                        {{ $booking->seats->count() }} kursi x Rp {{ number_format($booking->showtime->price, 0, ',', '.') }}
-                    </p>
                 </div>
             </div>
 
@@ -72,11 +69,25 @@
             <div class="space-y-6">
                 <div class="card p-6">
                     <h3 class="font-display font-bold text-lg text-ink mb-4">Ringkasan Pembayaran</h3>
+                    @php
+                        $regulerSeats = $booking->seats->where('seat_type', 'reguler');
+                        $vipSeats = $booking->seats->where('seat_type', 'vip');
+                        $basePrice = $booking->showtime->price;
+                        $vipPrice = $basePrice * 1.25;
+                    @endphp
                     <div class="space-y-3 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-ink-secondary">Harga Tiket</span>
-                            <span class="text-ink">Rp {{ number_format($booking->showtime->price, 0, ',', '.') }} x {{ $booking->seats->count() }}</span>
-                        </div>
+                        @if ($regulerSeats->count() > 0)
+                            <div class="flex justify-between">
+                                <span class="text-ink-secondary">Reguler ({{ $regulerSeats->count() }} kursi)</span>
+                                <span class="text-ink">Rp {{ number_format($basePrice, 0, ',', '.') }} x {{ $regulerSeats->count() }}</span>
+                            </div>
+                        @endif
+                        @if ($vipSeats->count() > 0)
+                            <div class="flex justify-between">
+                                <span class="text-ink-secondary">VIP ({{ $vipSeats->count() }} kursi)</span>
+                                <span class="text-ink">Rp {{ number_format($vipPrice, 0, ',', '.') }} x {{ $vipSeats->count() }}</span>
+                            </div>
+                        @endif
                         <div class="border-t border-gray-200 pt-3 flex justify-between">
                             <span class="font-bold text-ink">Total Bayar</span>
                             <span class="font-display font-bold text-xl text-ink">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</span>

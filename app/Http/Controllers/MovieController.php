@@ -30,6 +30,7 @@ class MovieController extends Controller
         $genres = Genre::all();
 
         $nowShowingMovieIds = \App\Models\Showtime::where('show_date', '>=', now()->toDateString())
+            ->where('is_active', true)
             ->pluck('movie_id')
             ->unique()
             ->toArray();
@@ -41,10 +42,12 @@ class MovieController extends Controller
     {
         $query = Movie::with('genres')
             ->whereHas('showtimes', function ($q) {
-                $q->where('show_date', '>=', now()->toDateString());
+                $q->where('show_date', '>=', now()->toDateString())
+                  ->where('is_active', true);
             })
             ->withCount(['showtimes as active_showtimes_count' => function ($q) {
-                $q->where('show_date', '>=', now()->toDateString());
+                $q->where('show_date', '>=', now()->toDateString())
+                  ->where('is_active', true);
             }]);
 
         if ($request->filled('search')) {
@@ -79,6 +82,7 @@ class MovieController extends Controller
 
         $hasShowtimes = $movie->showtimes()
             ->where('show_date', '>=', now()->toDateString())
+            ->where('is_active', true)
             ->exists();
 
         return view('movies.show', compact('movie', 'avgRating', 'reviewCount', 'hasShowtimes'));

@@ -22,19 +22,20 @@
                 <!-- Seats Grid -->
                 <div class="flex flex-col gap-2 items-center mb-8">
                     @foreach ($seatsByRow as $row => $seats)
-                        <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2">
                             <span class="text-xs font-bold w-5 text-center text-ink-secondary">{{ $row }}</span>
                             <div class="flex gap-1.5">
                                 @foreach ($seats as $seat)
                                     @php
                                         $isBooked = in_array($seat->id, $bookedSeatIds);
                                         $isVip = $seat->seat_type === 'vip';
+                                        $seatPrice = $isVip ? $showtime->price * 1.25 : $showtime->price;
                                     @endphp
                                     <button type="button"
                                             data-seat-id="{{ $seat->id }}"
                                             data-seat-number="{{ $seat->seat_number }}"
                                             data-seat-type="{{ $seat->seat_type }}"
-                                            data-price="{{ $showtime->price }}"
+                                            data-price="{{ $seatPrice }}"
                                             {{ $isBooked ? 'disabled' : '' }}
                                             onclick="toggleSeat(this)"
                                             class="seat-btn w-9 h-9 flex items-center justify-center text-[11px] font-bold rounded border-1.5 transition-all
@@ -98,7 +99,8 @@
                         </div>
                         <div>
                             <span class="block font-bold text-ink">Harga per Kursi</span>
-                            <span class="text-ink-secondary">Rp {{ number_format($showtime->price, 0, ',', '.') }}</span>
+                            <span class="text-ink-secondary">Reguler: Rp {{ number_format($showtime->price, 0, ',', '.') }}</span>
+                            <span class="text-ink-secondary block">VIP: Rp {{ number_format($showtime->price * 1.25, 0, ',', '.') }}</span>
                         </div>
                     </div>
                 </div>
@@ -110,10 +112,7 @@
                         Belum ada kursi dipilih
                     </div>
                     <div class="border-t border-gray-200 pt-4">
-                        <div class="flex justify-between text-sm mb-1">
-                            <span class="text-ink-secondary">Harga x <span id="seatCount">0</span> kursi</span>
-                            <span class="text-ink" id="pricePerSeat">Rp {{ number_format($showtime->price, 0, ',', '.') }}</span>
-                        </div>
+                        <div id="priceBreakdown" class="text-xs text-ink-secondary space-y-1 mb-3"></div>
                         <div class="flex justify-between font-display font-bold text-lg text-ink">
                             <span>Total</span>
                             <span id="totalPrice">Rp 0</span>
@@ -164,14 +163,14 @@
 
         function updateSummary() {
             const container = document.getElementById('selectedSeats');
-            const seatCount = document.getElementById('seatCount');
+            const breakdown = document.getElementById('priceBreakdown');
             const totalPrice = document.getElementById('totalPrice');
             const seatIdsInput = document.getElementById('seatIdsInput');
             const submitBtn = document.getElementById('submitBtn');
 
             if (selectedSeats.length === 0) {
                 container.innerHTML = '<span class="text-ink-secondary">Belum ada kursi dipilih</span>';
-                seatCount.textContent = '0';
+                breakdown.innerHTML = '';
                 totalPrice.textContent = 'Rp 0';
                 seatIdsInput.value = '';
                 submitBtn.disabled = true;
@@ -179,12 +178,25 @@
             }
 
             const labels = selectedSeats.map(s => {
-                const color = s.type === 'vip' ? 'text-yellow-text' : 'text-ink';
-                return `<span class="badge-blue">${s.number}</span>`;
+                return `<span class="badge-blue">${s.number} (${s.type.toUpperCase()})</span>`;
             }).join(' ');
 
             container.innerHTML = labels;
-            seatCount.textContent = selectedSeats.length;
+
+            const reguler = selectedSeats.filter(s => s.type === 'reguler');
+            const vip = selectedSeats.filter(s => s.type === 'vip');
+            let html = '';
+
+            if (reguler.length > 0) {
+                const regulerTotal = reguler.reduce((sum, s) => sum + s.price, 0);
+                html += `<div class="flex justify-between"><span>Reguler (${reguler.length} kursi)</span><span>Rp ${regulerTotal.toLocaleString('id-ID')}</span></div>`;
+            }
+            if (vip.length > 0) {
+                const vipTotal = vip.reduce((sum, s) => sum + s.price, 0);
+                html += `<div class="flex justify-between"><span>VIP (${vip.length} kursi)</span><span>Rp ${vipTotal.toLocaleString('id-ID')}</span></div>`;
+            }
+
+            breakdown.innerHTML = html;
 
             const total = selectedSeats.reduce((sum, s) => sum + s.price, 0);
             totalPrice.textContent = 'Rp ' + total.toLocaleString('id-ID');

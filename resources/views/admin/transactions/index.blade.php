@@ -91,7 +91,7 @@
                                     <div class="text-xs text-ink-secondary">{{ \Carbon\Carbon::parse($booking->showtime->show_time)->format('H:i') }} WIB</div>
                                 </td>
                                 <td class="px-4 py-3 text-center">
-                                    @php $seatLabels = $booking->seats->pluck('seat_number')->implode(', '); @endphp
+                                    @php $seatLabels = $booking->seats->pluck('seat_number')->map(fn($num, $key) => $num . '(' . strtoupper($booking->seats[$key]->seat_type) . ')')->implode(', '); @endphp
                                     <span class="badge-blue">{{ $seatLabels ?: '-' }}</span>
                                 </td>
                                 <td class="px-4 py-3 text-right font-medium text-ink">
