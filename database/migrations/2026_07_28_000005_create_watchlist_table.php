@@ -9,11 +9,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('watchlist', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('movie_id')->constrained('movies')->cascadeOnDelete();
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('movie_id');
+            $table->timestamp('created_at')->useCurrent();
             $table->unique(['user_id', 'movie_id']);
-            $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('movie_id')->references('id')->on('movies')->cascadeOnDelete();
         });
     }
 

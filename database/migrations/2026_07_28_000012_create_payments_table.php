@@ -9,13 +9,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('booking_id')->constrained('bookings')->cascadeOnDelete();
-            $table->enum('method', ['transfer', 'ewallet', 'cash'])->default('transfer');
+            $table->increments('id');
+            $table->unsignedInteger('booking_id');
+            $table->decimal('amount', 10, 2);
+            $table->string('method', 50)->nullable();
             $table->enum('status', ['pending', 'success', 'failed'])->default('pending');
-            $table->decimal('amount', 12, 2);
-            $table->timestamp('paid_at')->nullable();
-            $table->timestamps();
+            $table->timestamp('payment_date')->nullable();
+            $table->foreign('booking_id')->references('id')->on('bookings')->cascadeOnDelete();
         });
     }
 

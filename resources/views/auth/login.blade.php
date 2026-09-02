@@ -1,47 +1,60 @@
 <x-guest-layout>
+    <div class="mb-6 text-center">
+        <h1 class="font-display font-bold text-2xl text-ink">Masuk ke Akun</h1>
+        <p class="text-ink-secondary text-sm mt-1">Selamat datang kembali di FinalCut</p>
+    </div>
+
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <!-- Email Address -->
+        <!-- Email -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <label for="email" class="label">Email</label>
+            <input id="email" class="input @error('email') input-error @enderror"
+                   type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" placeholder="email@contoh.com">
+            @error('email')
+                <p class="error-text mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            <label for="password" class="label">Password</label>
+            <input id="password" class="input @error('password') input-error @enderror"
+                   type="password" name="password" required autocomplete="current-password" placeholder="Masukkan password">
+            @error('password')
+                <p class="error-text mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+        <div class="mt-4 flex items-center justify-between">
+            <label for="remember_me" class="inline-flex items-center gap-2 cursor-pointer">
+                <input id="remember_me" type="checkbox" class="w-4 h-4 border-1.5 border-ink rounded text-ink focus:ring-ink" name="remember">
+                <span class="text-sm text-ink-secondary">Ingat saya</span>
             </label>
-        </div>
 
-        <div class="flex items-center justify-end mt-4">
             @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
+                <a class="text-sm text-blue-text hover:underline" href="{{ route('password.request') }}">
+                    Lupa password?
                 </a>
             @endif
+        </div>
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+        <!-- Submit -->
+        <div class="mt-6">
+            <button type="submit" class="btn btn-primary w-full justify-center">
+                Log in
+            </button>
         </div>
     </form>
+
+    <!-- Register link -->
+    <p class="mt-6 text-center text-sm text-ink-secondary">
+        Belum punya akun?
+        <a href="{{ route('register') }}" class="font-medium text-blue-text hover:underline">Daftar sekarang</a>
+    </p>
 </x-guest-layout>

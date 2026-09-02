@@ -9,11 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('cinemas', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('city');
-            $table->text('address')->nullable();
-            $table->timestamps();
+            $table->increments('id');
+            $table->string('name', 100);
+            $table->string('address', 255)->nullable();
+            $table->string('city', 100)->nullable();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
         });
     }
 

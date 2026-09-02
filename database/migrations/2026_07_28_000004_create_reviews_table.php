@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -9,14 +10,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reviews', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('movie_id')->constrained('movies')->cascadeOnDelete();
-            $table->tinyInteger('rating');
-            $table->text('comment')->nullable();
-            $table->unique(['user_id', 'movie_id']);
-            $table->timestamps();
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('movie_id');
+            $table->unsignedTinyInteger('rating');
+            $table->text('review_text')->nullable();
+            $table->timestamp('created_at')->useCurrent();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('movie_id')->references('id')->on('movies')->cascadeOnDelete();
         });
+
+        DB::statement('ALTER TABLE reviews ADD CONSTRAINT chk_rating CHECK (rating BETWEEN 1 AND 5)');
     }
 
     public function down(): void

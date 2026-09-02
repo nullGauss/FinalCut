@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\MovieController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -8,8 +9,23 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
+    if (auth()->check() && auth()->user()->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
+
+    Route::get('/movies', [MovieController::class, 'index'])->name('movies.index');
+    Route::post('/movies', [MovieController::class, 'store'])->name('movies.store');
+    Route::get('/movies/{movie}/edit', [MovieController::class, 'edit'])->name('movies.edit');
+    Route::put('/movies/{movie}', [MovieController::class, 'update'])->name('movies.update');
+    Route::delete('/movies/{movie}', [MovieController::class, 'destroy'])->name('movies.destroy');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

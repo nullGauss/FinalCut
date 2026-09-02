@@ -9,13 +9,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('showtimes', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('movie_id')->constrained('movies')->cascadeOnDelete();
-            $table->foreignId('studio_id')->constrained('studios')->cascadeOnDelete();
+            $table->increments('id');
+            $table->unsignedInteger('movie_id');
+            $table->unsignedInteger('studio_id');
             $table->date('show_date');
-            $table->time('start_time');
+            $table->time('show_time');
             $table->decimal('price', 10, 2);
-            $table->timestamps();
+            $table->foreign('movie_id')->references('id')->on('movies')->cascadeOnDelete();
+            $table->foreign('studio_id')->references('id')->on('studios')->cascadeOnDelete();
         });
     }
 

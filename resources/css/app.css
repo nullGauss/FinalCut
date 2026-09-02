@@ -1,3 +1,123 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    html {
+        @apply bg-background text-ink antialiased;
+    }
+    body {
+        @apply font-body;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-display font-semibold;
+    }
+}
+
+@layer components {
+    /* Hard shadow card */
+    .card {
+        @apply bg-surface border-1.5 border-ink shadow-hard rounded-lg;
+    }
+    .card-sm {
+        @apply bg-surface border-1.5 border-ink shadow-hard-sm rounded-md;
+    }
+    .card-lg {
+        @apply bg-surface border-1.5 border-ink shadow-hard-lg rounded-xl;
+    }
+
+    /* Pill button */
+    .btn {
+        @apply inline-flex items-center justify-center px-5 py-2 border-1.5 border-ink rounded-full font-body font-medium transition-all duration-150;
+    }
+    .btn-primary {
+        @apply btn bg-ink text-surface hover:bg-surface hover:text-ink hover:border-ink;
+    }
+    .btn-secondary {
+        @apply btn bg-surface text-ink hover:bg-ink hover:text-surface;
+    }
+    .btn-outline {
+        @apply btn bg-transparent text-ink hover:bg-ink hover:text-surface;
+    }
+    .btn-blue {
+        @apply btn bg-blue-bg text-blue-text hover:bg-blue-text hover:text-surface;
+    }
+    .btn-yellow {
+        @apply btn bg-yellow-bg text-yellow-text hover:bg-yellow-text hover:text-surface;
+    }
+    .btn-sm {
+        @apply px-3 py-1 text-sm;
+    }
+    .btn-lg {
+        @apply px-7 py-3 text-lg;
+    }
+
+    /* Input */
+    .input {
+        @apply w-full px-4 py-2.5 border-1.5 border-ink bg-surface text-ink placeholder:text-ink-secondary focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2 rounded-md font-body;
+    }
+    .input-error {
+        @apply border-red-600 focus:ring-red-600;
+    }
+    .label {
+        @apply block mb-1.5 text-sm font-medium text-ink font-body;
+    }
+    .error-text {
+        @apply text-sm text-red-600 font-body;
+    }
+
+    /* Badge/Tag */
+    .badge {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-body;
+    }
+    .badge-blue {
+        @apply badge bg-blue-bg text-blue-text;
+    }
+    .badge-yellow {
+        @apply badge bg-yellow-bg text-yellow-text;
+    }
+    .badge-ink {
+        @apply badge bg-ink text-surface;
+    }
+
+    /* Obi strip (vertical label) */
+.obi-strip {
+    @apply absolute -right-4 top-1/2 -translate-y-1/2 rotate-90 transform origin-center;
+    @apply bg-ink text-surface text-xs font-medium font-display px-2 py-1 whitespace-nowrap;
+}
+
+    /* Poster placeholder diagonal lines */
+    .poster-placeholder {
+        @apply relative bg-gray-100 overflow-hidden;
+    }
+    .poster-placeholder::before {
+        content: '';
+        @apply absolute inset-0;
+        background-image: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            #E5E5E5 10px,
+            #E5E5E5 20px
+        );
+    }
+
+    /* Handwriting accent text */
+    .handwriting {
+        @apply font-handwriting text-ink;
+    }
+
+    /* Page container */
+    .page-container {
+        @apply min-h-screen bg-background;
+    }
+    .section {
+        @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12;
+    }
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+}

@@ -9,11 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('movie_genre', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('movie_id')->constrained('movies')->cascadeOnDelete();
-            $table->foreignId('genre_id')->constrained('genres')->cascadeOnDelete();
+            $table->increments('id');
+            $table->unsignedInteger('movie_id');
+            $table->unsignedInteger('genre_id');
             $table->unique(['movie_id', 'genre_id']);
-            $table->timestamps();
+            $table->foreign('movie_id')->references('id')->on('movies')->cascadeOnDelete();
+            $table->foreign('genre_id')->references('id')->on('genres')->cascadeOnDelete();
         });
     }
 

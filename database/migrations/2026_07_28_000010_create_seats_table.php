@@ -9,12 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('seats', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('studio_id')->constrained('studios')->cascadeOnDelete();
-            $table->string('row_label', 5);
-            $table->integer('seat_number');
-            $table->unique(['studio_id', 'row_label', 'seat_number']);
-            $table->timestamps();
+            $table->increments('id');
+            $table->unsignedInteger('studio_id');
+            $table->string('seat_number', 10);
+            $table->enum('seat_type', ['reguler', 'vip'])->default('reguler');
+            $table->unique(['studio_id', 'seat_number']);
+            $table->foreign('studio_id')->references('id')->on('studios')->cascadeOnDelete();
         });
     }
 
