@@ -40,6 +40,10 @@
                            class="text-sm font-medium {{ request()->routeIs('admin.reports.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
                             Laporan
                         </a>
+                        <a href="{{ route('admin.users.index') }}"
+                           class="text-sm font-medium {{ request()->routeIs('admin.users.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                            Kelola User
+                        </a>
                     @endif
                 </div>
             </div>
@@ -95,6 +99,7 @@
                 <a href="{{ route('admin.showtimes.index') }}" class="block text-sm font-medium text-ink">Jadwal Tayang</a>
                 <a href="{{ route('admin.transactions.index') }}" class="block text-sm font-medium text-ink">Transaksi</a>
                 <a href="{{ route('admin.reports.index') }}" class="block text-sm font-medium text-ink">Laporan</a>
+                <a href="{{ route('admin.users.index') }}" class="block text-sm font-medium text-ink">Kelola User</a>
             @endif
         </div>
         <div class="section py-4 border-t border-ink">
