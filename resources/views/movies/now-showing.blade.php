@@ -4,6 +4,11 @@
     </x-slot>
 
     <div class="section">
+        <x-breadcrumb :items="[
+            ['label' => 'Film', 'url' => route('movies.index')],
+            ['label' => 'Sedang Tayang'],
+        ]" />
+
         <!-- Search & Filter -->
         <form method="GET" class="card p-4 mb-8">
             <div class="flex flex-col sm:flex-row gap-4">

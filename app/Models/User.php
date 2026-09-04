@@ -25,6 +25,8 @@ class User extends Authenticatable
         'foto',
         'bio',
         'is_active',
+        'pending_email',
+        'email_change_token',
     ];
 
     /**

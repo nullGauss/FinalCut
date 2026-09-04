@@ -21,4 +21,11 @@ class Seat extends Model
     {
         return $this->belongsTo(Studio::class);
     }
+
+    public function bookings()
+    {
+        return $this->belongsToMany(Booking::class, 'booking_seats', 'seat_id', 'booking_id')
+                     ->using(BookingSeat::class)
+                     ->withPivot('id');
+    }
 }

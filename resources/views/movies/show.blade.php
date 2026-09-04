@@ -1,14 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-4">
-            <a href="{{ route('movies.index') }}" class="btn btn-outline btn-sm">
-                &larr; Kembali
-            </a>
-            <h1 class="font-display font-bold text-2xl text-ink line-clamp-1">{{ $movie->title }}</h1>
-        </div>
+        <h1 class="font-display font-bold text-2xl text-ink line-clamp-1">{{ $movie->title }}</h1>
     </x-slot>
 
     <div class="section">
+        <x-breadcrumb :items="[
+            ['label' => 'Film', 'url' => route('movies.index')],
+            ['label' => $movie->title],
+        ]" />
+
         <!-- Flash Messages -->
         @if (session('success'))
             <div class="card-sm p-4 mb-6 bg-green-50 border-green-600 text-green-800">

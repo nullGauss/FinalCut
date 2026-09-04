@@ -1,22 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-4">
-            <a href="{{ route('admin.cinemas.index') }}" class="btn btn-outline btn-sm">
-                &larr; Kembali
-            </a>
-            <div>
-                <h1 class="font-display font-bold text-2xl text-ink">Studio & Kursi</h1>
-                <p class="text-sm text-ink-secondary">{{ $cinema->name }} ({{ $cinema->city }})</p>
-            </div>
-            <div class="ml-auto">
-                <button onclick="openModal()" class="btn btn-primary btn-sm">
-                    + Tambah Studio
-                </button>
-            </div>
+        <div class="flex items-center justify-between">
+            <h1 class="font-display font-bold text-2xl text-ink">Studio & Kursi</h1>
+            <button onclick="openModal()" class="btn btn-primary btn-sm">
+                + Tambah Studio
+            </button>
         </div>
     </x-slot>
 
     <div class="section">
+        <x-breadcrumb :items="[
+            ['label' => 'Admin', 'url' => route('admin.dashboard')],
+            ['label' => 'Kelola Bioskop', 'url' => route('admin.cinemas.index')],
+            ['label' => $cinema->name],
+        ]" />
+
         @if (session('success'))
             <div class="card-sm p-4 mb-6 bg-green-50 border-green-600 text-green-800">
                 {{ session('success') }}

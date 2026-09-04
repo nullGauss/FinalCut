@@ -1,14 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-4">
-            <a href="{{ route('profile.show') }}" class="btn btn-outline btn-sm">
-                &larr; Kembali
-            </a>
-            <h1 class="font-display font-bold text-2xl text-ink">Pengaturan Profile</h1>
-        </div>
+        <h1 class="font-display font-bold text-2xl text-ink">Pengaturan Profile</h1>
     </x-slot>
 
     <div class="section">
+        <x-breadcrumb :items="[
+            ['label' => 'Profile', 'url' => route('profile.show')],
+            ['label' => 'Pengaturan'],
+        ]" />
+
         @if (session('status') === 'profile-updated')
             <div class="card-sm p-4 mb-6 bg-green-50 border-green-600 text-green-800">Profile berhasil diperbarui!</div>
         @endif
@@ -17,6 +17,12 @@
         @endif
         @if (session('status') === 'foto-deleted')
             <div class="card-sm p-4 mb-6 bg-green-50 border-green-600 text-green-800">Foto profil berhasil dihapus.</div>
+        @endif
+        @if (session('status') === 'email-changed')
+            <div class="card-sm p-4 mb-6 bg-green-50 border-green-600 text-green-800">Email berhasil diubah!</div>
+        @endif
+        @if (session('status') === 'email-change-cancelled')
+            <div class="card-sm p-4 mb-6 bg-yellow-50 border-yellow-600 text-yellow-800">Perubahan email dibatalkan.</div>
         @endif
         @if (session('status') === 'password-updated')
             <div class="card-sm p-4 mb-6 bg-green-50 border-green-600 text-green-800">Password berhasil diubah!</div>
@@ -94,9 +100,53 @@
             <div class="card p-6">
                 <h3 class="font-display font-bold text-lg text-ink mb-2">Ganti Email</h3>
                 <p class="text-sm text-ink-secondary mb-4">Email saat ini: <span class="font-medium text-ink">{{ $user->email }}</span></p>
-                <div class="card-sm p-4 bg-background border-dashed">
-                    <p class="text-sm text-ink-secondary">Fitur ganti email dengan verifikasi akan segera tersedia.</p>
-                </div>
+
+                @if ($user->pending_email)
+                    <div class="card-sm p-4 bg-yellow-50 border-yellow-600 mb-4">
+                        <p class="text-sm text-yellow-800">
+                            Email verifikasi sudah dikirim ke <span class="font-medium">{{ $user->pending_email }}</span>.
+                        </p>
+                        <p class="text-xs text-yellow-700 mt-1">
+                            Cek inbox/kotak spam kamu untuk link verifikasi.
+                        </p>
+                        <div class="mt-3 flex gap-2">
+                            <form method="POST" action="{{ route('email-change.request') }}" class="inline">
+                                @csrf
+                                <input type="hidden" name="new_email" value="{{ $user->pending_email }}">
+                                <input type="hidden" name="password" value="">
+                                <button type="submit" class="text-xs text-yellow-700 hover:underline">Kirim ulang</button>
+                            </form>
+                            <span class="text-yellow-600">|</span>
+                            <form method="POST" action="{{ route('email-change.cancel') }}" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-xs text-red-600 hover:underline">Batalkan</button>
+                            </form>
+                        </div>
+                    </div>
+                @else
+                    <form method="POST" action="{{ route('email-change.request') }}">
+                        @csrf
+                        <div class="space-y-4">
+                            <div>
+                                <label for="new_email" class="label">Email Baru <span class="text-red-600">*</span></label>
+                                <input type="email" id="new_email" name="new_email" class="input" required maxlength="255"
+                                       placeholder="email-baru@contoh.com" value="{{ old('new_email') }}">
+                                @error('new_email') <p class="error-text mt-1">{{ $message }}</p> @enderror
+                            </div>
+
+                            <div>
+                                <label for="email_password" class="label">Password untuk Konfirmasi <span class="text-red-600">*</span></label>
+                                <input type="password" id="email_password" name="password" class="input" required>
+                                @error('password') <p class="error-text mt-1">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Kirim Link Verifikasi</button>
+                        </div>
+                    </form>
+                @endif
             </div>
 
             <!-- Ganti Password -->

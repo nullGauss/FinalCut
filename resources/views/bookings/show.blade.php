@@ -1,12 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-4">
-            <a href="{{ route('bookings.history') }}" class="btn btn-outline btn-sm">&larr; Riwayat</a>
-            <h1 class="font-display font-bold text-2xl text-ink">Detail Booking #{{ $booking->id }}</h1>
-        </div>
+        <h1 class="font-display font-bold text-2xl text-ink">Detail Booking #{{ $booking->id }}</h1>
     </x-slot>
 
     <div class="section">
+        <x-breadcrumb :items="[
+            ['label' => 'Riwayat', 'url' => route('bookings.history')],
+            ['label' => 'Booking #' . $booking->id],
+        ]" />
+
         @if (session('success'))
             <div class="card-sm p-4 mb-6 bg-green-50 border-green-600 text-green-800 text-center">
                 {{ session('success') }}

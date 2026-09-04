@@ -4,6 +4,10 @@
     </x-slot>
 
     <div class="section">
+        <x-breadcrumb :items="[
+            ['label' => 'Profile'],
+        ]" />
+
         <div class="max-w-lg mx-auto">
             <!-- Profile Card -->
             <div class="card p-8 text-center">

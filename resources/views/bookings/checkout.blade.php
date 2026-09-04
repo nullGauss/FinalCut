@@ -1,12 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-4">
-            <a href="{{ route('bookings.selectSeats', $booking->showtime) }}" class="btn btn-outline btn-sm">&larr; Kembali</a>
-            <h1 class="font-display font-bold text-2xl text-ink">Checkout & Pembayaran</h1>
-        </div>
+        <h1 class="font-display font-bold text-2xl text-ink">Checkout & Pembayaran</h1>
     </x-slot>
 
     <div class="section">
+        <x-breadcrumb :items="[
+            ['label' => 'Film', 'url' => route('movies.index')],
+            ['label' => $booking->showtime->movie->title, 'url' => route('movies.show', $booking->showtime->movie)],
+            ['label' => 'Pilih Jadwal', 'url' => route('bookings.selectShowtime', $booking->showtime->movie)],
+            ['label' => 'Pilih Kursi', 'url' => route('bookings.selectSeats', $booking->showtime)],
+            ['label' => 'Checkout'],
+        ]" />
+
         @if (session('error'))
             <div class="card-sm p-4 mb-6 bg-red-50 border-red-600 text-red-800">
                 {{ session('error') }}

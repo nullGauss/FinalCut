@@ -1,10 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-4">
-            <a href="{{ route('admin.transactions.index') }}" class="btn btn-outline btn-sm">&larr; Kembali</a>
+        <div class="flex items-center justify-between">
             <h1 class="font-display font-bold text-2xl text-ink">Detail Transaksi #{{ $booking->id }}</h1>
             @if ($booking->status === 'paid')
-                <a href="{{ route('bookings.print', $booking) }}" target="_blank" class="btn btn-primary btn-sm ml-auto">
+                <a href="{{ route('bookings.print', $booking) }}" target="_blank" class="btn btn-primary btn-sm">
                     Cetak Tiket
                 </a>
             @endif
@@ -12,6 +11,12 @@
     </x-slot>
 
     <div class="section">
+        <x-breadcrumb :items="[
+            ['label' => 'Admin', 'url' => route('admin.dashboard')],
+            ['label' => 'Kelola Transaksi', 'url' => route('admin.transactions.index')],
+            ['label' => 'Transaksi #' . $booking->id],
+        ]" />
+
         @if (session('success'))
             <div class="card-sm p-4 mb-6 bg-green-50 border-green-600 text-green-800">
                 {{ session('success') }}

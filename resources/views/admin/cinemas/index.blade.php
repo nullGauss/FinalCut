@@ -1,19 +1,19 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-4">
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline btn-sm">
-                &larr; Kembali
-            </a>
+        <div class="flex items-center justify-between">
             <h1 class="font-display font-bold text-2xl text-ink">Kelola Bioskop</h1>
-            <div class="ml-auto">
-                <button onclick="openModal('add')" class="btn btn-primary btn-sm">
-                    + Tambah Bioskop
-                </button>
-            </div>
+            <button onclick="openModal('add')" class="btn btn-primary btn-sm">
+                + Tambah Bioskop
+            </button>
         </div>
     </x-slot>
 
     <div class="section">
+        <x-breadcrumb :items="[
+            ['label' => 'Admin', 'url' => route('admin.dashboard')],
+            ['label' => 'Kelola Bioskop'],
+        ]" />
+
         <!-- Flash Message -->
         @if (session('success'))
             <div class="card-sm p-4 mb-6 bg-green-50 border-green-600 text-green-800">

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\EmailChangeController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
@@ -79,6 +80,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Email Change with Verification
+    Route::post('/profile/email/change', [EmailChangeController::class, 'requestChange'])->name('email-change.request');
+    Route::delete('/profile/email/cancel', [EmailChangeController::class, 'cancel'])->name('email-change.cancel');
+
     // Profile (Publik)
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/{user}', [ProfileController::class, 'userProfile'])->name('profile.user');
@@ -114,5 +119,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/bookings/{booking}/print', [BookingController::class, 'print'])->name('bookings.print');
     Route::get('/riwayat', [BookingController::class, 'history'])->name('bookings.history');
 });
+
+// Email Change Verification (tanpa auth middleware karena link dari email)
+Route::get('/email-change/verify', [EmailChangeController::class, 'verify'])->name('email-change.verify');
 
 require __DIR__.'/auth.php';
