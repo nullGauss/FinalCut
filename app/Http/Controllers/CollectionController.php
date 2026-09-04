@@ -13,18 +13,44 @@ class CollectionController extends Controller
     {
         $user = $request->user();
         $tab = $request->get('tab', 'watchlist');
+        $sort = $request->get('sort', 'newest');
 
         $watchlist = Watchlist::with('movie.genres')
             ->where('user_id', $user->id)
             ->latest('created_at')
             ->get();
 
-        $diary = WatchedDiary::with('movie.genres')
-            ->where('user_id', $user->id)
-            ->latest('watched_date')
-            ->get();
+        $diaryQuery = WatchedDiary::with(['movie.genres', 'movie.reviews' => function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            }])
+            ->where('watched_diary.user_id', $user->id);
 
-        return view('collection.index', compact('watchlist', 'diary', 'tab'));
+        switch ($sort) {
+            case 'oldest':
+                $diaryQuery->oldest('watched_date');
+                break;
+            case 'rating_high':
+            case 'rating_low':
+                // Load semua diary dulu, sort di collection Laravel
+                $diary = $diaryQuery->get()->sortBy(function ($item) use ($sort) {
+                    $review = $item->movie->reviews->first();
+                    $rating = $review ? $review->rating : 0;
+                    return $sort === 'rating_high' ? -$rating : $rating;
+                }, SORT_REGULAR, false)->values();
+                return view('collection.index', compact('watchlist', 'diary', 'tab', 'sort'));
+            case 'az':
+                $diary = $diaryQuery->get()->sortBy(function ($item) {
+                    return $item->movie->title;
+                }, SORT_STRING, false)->values();
+                return view('collection.index', compact('watchlist', 'diary', 'tab', 'sort'));
+            default: // newest
+                $diaryQuery->latest('watched_date');
+                break;
+        }
+
+        $diary = $diaryQuery->get();
+
+        return view('collection.index', compact('watchlist', 'diary', 'tab', 'sort'));
     }
 
     public function toggleWatchlist(Movie $movie)

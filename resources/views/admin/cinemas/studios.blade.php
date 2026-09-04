@@ -57,11 +57,7 @@
                                 <h3 class="font-display font-bold text-xl text-ink">{{ $studio->name }}</h3>
                                 <p class="text-sm text-ink-secondary">Kapasitas: {{ $studio->capacity }} Kursi</p>
                             </div>
-                            <form method="POST" action="{{ route('admin.cinemas.studios.destroy', [$cinema, $studio]) }}" onsubmit="return confirm('Hapus studio ini beserta seluruh kursinya?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-sm text-red-600 hover:underline">Hapus Studio</button>
-                            </form>
+                            <button type="button" onclick="openDeleteStudioModal({{ $studio->id }})" class="text-sm text-red-600 hover:underline">Hapus Studio</button>
                         </div>
                         
                         <!-- Map Visualisasi Ringkas Kursi -->
@@ -147,6 +143,30 @@
         </div>
     </div>
 
+    <!-- Modal Hapus Studio -->
+    <div id="deleteStudioModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-ink/50" onclick="closeDeleteStudioModal()"></div>
+        <div class="absolute inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-sm bg-surface border-1.5 border-ink shadow-hard-lg rounded-xl overflow-hidden">
+            <div class="p-6 text-center">
+                <div class="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </div>
+                <h3 class="font-display font-bold text-xl text-ink mb-2">Hapus Studio?</h3>
+                <p class="text-ink-secondary text-sm mb-6">Seluruh kursi di studio ini akan ikut terhapus.</p>
+                <div class="flex gap-3">
+                    <button onclick="closeDeleteStudioModal()" class="btn btn-outline btn-sm flex-1">Batal</button>
+                    <form id="deleteStudioForm" method="POST" class="flex-1">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm w-full justify-center border-red-600 text-red-600 hover:bg-red-600 hover:text-white">Ya, Hapus</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
     <script>
         function openModal() {
@@ -155,6 +175,18 @@
         }
         function closeModal() {
             document.getElementById('studioModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function openDeleteStudioModal(id) {
+            const form = document.getElementById('deleteStudioForm');
+            form.action = `/admin/cinemas/{{ $cinema->id }}/studios/${id}`;
+            document.getElementById('deleteStudioModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDeleteStudioModal() {
+            document.getElementById('deleteStudioModal').classList.add('hidden');
             document.body.style.overflow = '';
         }
     </script>

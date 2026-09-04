@@ -71,10 +71,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 Route::middleware('auth')->group(function () {
-    // Profil
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    // Settings (Privat) — harus sebelum /profile/{user} agar tidak tertangkap
+    Route::get('/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
+    Route::patch('/profile/settings', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo');
+    Route::delete('/profile/photo', [ProfileController::class, 'deletePhoto'])->name('profile.photo.delete');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Profile (Publik)
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/{user}', [ProfileController::class, 'userProfile'])->name('profile.user');
 
     // Daftar Film (Sesuai B_Flow.md, hanya yang login bisa akses)
     Route::get('/movies', [MovieController::class, 'index'])->name('movies.index');
@@ -96,7 +103,7 @@ Route::middleware('auth')->group(function () {
     // Koleksi Saya
     Route::get('/collection', [CollectionController::class, 'index'])->name('collection.index');
 
-    // Profile
+    // Booking
     Route::get('/movies/{movie}/book', [BookingController::class, 'selectShowtime'])->name('bookings.selectShowtime');
     Route::get('/bookings/{showtime}/seats', [BookingController::class, 'selectSeats'])->name('bookings.selectSeats');
     Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');

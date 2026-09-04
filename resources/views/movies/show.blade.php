@@ -134,9 +134,12 @@
                     <p class="text-sm text-ink-secondary">dari {{ $reviewCount }} ulasan</p>
                 </div>
 
-                <!-- Add Review Form -->
+                <!-- Review Form -->
                 <div class="card p-6">
-                    <h3 class="font-display font-bold text-lg text-ink mb-4">Tulis Ulasan</h3>
+                    @php
+                        $myReview = $movie->reviews->where('user_id', auth()->id())->first();
+                    @endphp
+                    <h3 class="font-display font-bold text-lg text-ink mb-4">{{ $myReview ? 'Edit Ulasan' : 'Tulis Ulasan' }}</h3>
                     <form method="POST" action="{{ route('reviews.store', $movie) }}">
                         @csrf
                         <div class="mb-4">
@@ -144,7 +147,8 @@
                             <div class="flex gap-2">
                                 @for($i = 1; $i <= 5; $i++)
                                     <label class="cursor-pointer group">
-                                        <input type="radio" name="rating" value="{{ $i }}" class="peer sr-only" required>
+                                        <input type="radio" name="rating" value="{{ $i }}" class="peer sr-only" required
+                                            {{ ($myReview && $myReview->rating == $i) ? 'checked' : '' }}>
                                         <div class="w-8 h-8 flex items-center justify-center rounded-full border-1.5 border-ink bg-surface peer-checked:bg-yellow-bg peer-checked:text-yellow-text hover:bg-background transition-colors font-bold">
                                             {{ $i }}
                                         </div>
@@ -156,11 +160,20 @@
 
                         <div class="mb-4">
                             <label for="review_text" class="label">Ulasan (Opsional)</label>
-                            <textarea id="review_text" name="review_text" rows="3" class="input" placeholder="Bagaimana pendapatmu?"></textarea>
+                            <textarea id="review_text" name="review_text" rows="3" class="input" placeholder="Bagaimana pendapatmu?">{{ $myReview ? $myReview->review_text : '' }}</textarea>
                             @error('review_text') <p class="error-text mt-1">{{ $message }}</p> @enderror
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-full justify-center">Kirim Ulasan</button>
+                        <div class="flex gap-3">
+                            <button type="submit" class="btn btn-primary flex-1 justify-center">
+                                {{ $myReview ? 'Simpan Perubahan' : 'Kirim Ulasan' }}
+                            </button>
+                            @if ($myReview)
+                                <button type="button" onclick="openDeleteReviewModal({{ $myReview->id }})" class="btn btn-sm border-red-600 text-red-600 hover:bg-red-600 hover:text-white px-4">
+                                    Hapus
+                                </button>
+                            @endif
+                        </div>
                     </form>
                 </div>
 
@@ -168,7 +181,7 @@
                 <div class="space-y-4">
                     <h3 class="font-display font-bold text-lg text-ink">Ulasan Penonton</h3>
                     
-                    @forelse ($movie->reviews as $review)
+                    @forelse ($movie->reviews->where('user_id', '!=', auth()->id()) as $review)
                         <div class="card-sm p-4">
                             <div class="flex items-start justify-between gap-4 mb-2">
                                 <div>
@@ -178,14 +191,6 @@
                                         <span class="text-[10px] text-ink-secondary">{{ \Carbon\Carbon::parse($review->created_at)->diffForHumans() }}</span>
                                     </div>
                                 </div>
-                                
-                                @if($review->user_id === auth()->id())
-                                    <form method="POST" action="{{ route('reviews.destroy', $review) }}" onsubmit="return confirm('Hapus ulasan ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-xs text-red-600 hover:underline">Hapus</button>
-                                    </form>
-                                @endif
                             </div>
                             @if($review->review_text)
                                 <p class="text-sm text-ink leading-relaxed mt-2">{{ $review->review_text }}</p>
@@ -193,7 +198,7 @@
                         </div>
                     @empty
                         <div class="card-sm p-6 text-center border-dashed">
-                            <p class="text-sm text-ink-secondary">Belum ada ulasan.</p>
+                            <p class="text-sm text-ink-secondary">Belum ada ulasan dari penonton lain.</p>
                         </div>
                     @endforelse
                 </div>
@@ -225,6 +230,30 @@
         </div>
     </div>
 
+    <!-- Modal Hapus Ulasan -->
+    <div id="deleteReviewModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-ink/50" onclick="closeDeleteReviewModal()"></div>
+        <div class="absolute inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-sm bg-surface border-1.5 border-ink shadow-hard-lg rounded-xl overflow-hidden">
+            <div class="p-6 text-center">
+                <div class="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </div>
+                <h3 class="font-display font-bold text-xl text-ink mb-2">Hapus Ulasan?</h3>
+                <p class="text-ink-secondary text-sm mb-6">Ulasan ini akan dihapus permanen.</p>
+                <div class="flex gap-3">
+                    <button onclick="closeDeleteReviewModal()" class="btn btn-outline btn-sm flex-1">Batal</button>
+                    <form id="deleteReviewForm" method="POST" class="flex-1">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm w-full justify-center border-red-600 text-red-600 hover:bg-red-600 hover:text-white">Ya, Hapus</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
     <script>
         function openDiaryModal() {
@@ -234,6 +263,18 @@
 
         function closeDiaryModal() {
             document.getElementById('diaryModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function openDeleteReviewModal(id) {
+            const form = document.getElementById('deleteReviewForm');
+            form.action = `/reviews/${id}`;
+            document.getElementById('deleteReviewModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDeleteReviewModal() {
+            document.getElementById('deleteReviewModal').classList.add('hidden');
             document.body.style.overflow = '';
         }
     </script>

@@ -97,12 +97,11 @@
                                                 @csrf
                                                 @method('PUT')
                                                 @if ($user->is_active)
-                                                    <button type="submit" class="btn btn-sm border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
-                                                            onclick="return confirm('Nonaktifkan akun {{ $user->name }}?')">
+                                                    <button type="button" onclick="openToggleActiveModal({{ $user->id }}, '{{ addslashes($user->name) }}', 'nonaktifkan')" class="btn btn-sm border-red-600 text-red-600 hover:bg-red-600 hover:text-white">
                                                         Nonaktifkan
                                                     </button>
                                                 @else
-                                                    <button type="submit" class="btn btn-sm border-green-600 text-green-600 hover:bg-green-600 hover:text-white">
+                                                    <button type="button" onclick="openToggleActiveModal({{ $user->id }}, '{{ addslashes($user->name) }}', 'aktifkan')" class="btn btn-sm border-green-600 text-green-600 hover:bg-green-600 hover:text-white">
                                                         Aktifkan
                                                     </button>
                                                 @endif
@@ -110,8 +109,7 @@
                                             <form method="POST" action="{{ route('admin.users.resetPassword', $user) }}" class="inline">
                                                 @csrf
                                                 @method('PUT')
-                                                <button type="submit" class="btn btn-sm border-yellow-text text-yellow-text hover:bg-yellow-bg"
-                                                        onclick="return confirm('Reset password {{ $user->name }} ke default?')">
+                                                <button type="button" onclick="openResetPwModal({{ $user->id }}, '{{ addslashes($user->name) }}')" class="btn btn-sm border-yellow-text text-yellow-text hover:bg-yellow-bg">
                                                     Reset PW
                                                 </button>
                                             </form>
@@ -187,6 +185,68 @@
         </div>
     </div>
 
+    <!-- Modal Toggle Active -->
+    <div id="toggleActiveModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-ink/50" onclick="closeToggleActiveModal()"></div>
+        <div class="absolute inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-sm bg-surface border-1.5 border-ink shadow-hard-lg rounded-xl overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b-1.5 border-ink">
+                <h2 id="toggleActiveTitle" class="font-display font-bold text-lg text-ink">Konfirmasi</h2>
+                <button onclick="closeToggleActiveModal()" class="text-ink-secondary hover:text-ink">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center gap-4 mb-6">
+                    <div id="toggleActiveIcon" class="w-12 h-12 rounded-full border-1.5 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    </div>
+                    <div>
+                        <p id="toggleActiveText" class="text-sm text-ink"></p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeToggleActiveModal()" class="btn btn-outline btn-sm flex-1">Batal</button>
+                    <form id="toggleActiveForm" method="POST" class="flex-1">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" id="toggleActiveBtn" class="btn btn-sm w-full">Konfirmasi</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Reset Password -->
+    <div id="resetPwModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-ink/50" onclick="closeResetPwModal()"></div>
+        <div class="absolute inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-sm bg-surface border-1.5 border-ink shadow-hard-lg rounded-xl overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b-1.5 border-ink">
+                <h2 class="font-display font-bold text-lg text-ink">Reset Password?</h2>
+                <button onclick="closeResetPwModal()" class="text-ink-secondary hover:text-ink">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-full bg-yellow-bg border-1.5 border-yellow-text flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-yellow-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
+                    </div>
+                    <div>
+                        <p id="resetPwText" class="text-sm text-ink">Password akan direset ke default.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeResetPwModal()" class="btn btn-outline btn-sm flex-1">Batal</button>
+                    <form id="resetPwForm" method="POST" class="flex-1">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" class="btn btn-sm border-yellow-text text-yellow-text hover:bg-yellow-bg w-full">Ya, Reset</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
     <script>
         function openEditModal(id) {
@@ -211,6 +271,51 @@
 
         function closeModal() {
             document.getElementById('editModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function openToggleActiveModal(id, name, action) {
+            const form = document.getElementById('toggleActiveForm');
+            form.action = `/admin/users/${id}/toggle-active`;
+            const title = document.getElementById('toggleActiveTitle');
+            const text = document.getElementById('toggleActiveText');
+            const btn = document.getElementById('toggleActiveBtn');
+            const icon = document.getElementById('toggleActiveIcon');
+
+            if (action === 'nonaktifkan') {
+                title.textContent = 'Nonaktifkan Akun?';
+                text.textContent = `Akun "${name}" akan dinonaktifkan. User tidak bisa login sampai diaktifkan kembali.`;
+                btn.className = 'btn btn-sm border-red-600 text-red-600 hover:bg-red-600 hover:text-white w-full';
+                btn.textContent = 'Ya, Nonaktifkan';
+                icon.className = 'w-12 h-12 rounded-full bg-red-50 border-1.5 border-red-600 flex items-center justify-center shrink-0';
+                icon.innerHTML = '<svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>';
+            } else {
+                title.textContent = 'Aktifkan Akun?';
+                text.textContent = `Akun "${name}" akan diaktifkan kembali.`;
+                btn.className = 'btn btn-sm border-green-600 text-green-600 hover:bg-green-600 hover:text-white w-full';
+                btn.textContent = 'Ya, Aktifkan';
+                icon.className = 'w-12 h-12 rounded-full bg-green-50 border-1.5 border-green-600 flex items-center justify-center shrink-0';
+                icon.innerHTML = '<svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+            }
+
+            document.getElementById('toggleActiveModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeToggleActiveModal() {
+            document.getElementById('toggleActiveModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function openResetPwModal(id, name) {
+            document.getElementById('resetPwForm').action = `/admin/users/${id}/reset-password`;
+            document.getElementById('resetPwText').textContent = `Password "${name}" akan direset ke default (12345678). User harus login ulang dengan password baru.`;
+            document.getElementById('resetPwModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeResetPwModal() {
+            document.getElementById('resetPwModal').classList.add('hidden');
             document.body.style.overflow = '';
         }
     </script>

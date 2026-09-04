@@ -69,14 +69,9 @@
                                                 class="btn btn-outline btn-sm">
                                             Edit
                                         </button>
-                                        <form method="POST" action="{{ route('admin.movies.destroy', $movie) }}"
-                                              onsubmit="return confirm('Yakin ingin hapus film ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm border-red-600 text-red-600 hover:bg-red-600 hover:text-white">
-                                                Hapus
-                                            </button>
-                                        </form>
+                                        <button onclick="openDeleteModal({{ $movie->id }})" class="btn btn-sm border-red-600 text-red-600 hover:bg-red-600 hover:text-white">
+                                            Hapus
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -197,6 +192,30 @@
         </div>
     </div>
 
+    <!-- Modal Hapus Film -->
+    <div id="deleteMovieModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-ink/50" onclick="closeDeleteModal()"></div>
+        <div class="absolute inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-sm bg-surface border-1.5 border-ink shadow-hard-lg rounded-xl overflow-hidden">
+            <div class="p-6 text-center">
+                <div class="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </div>
+                <h3 class="font-display font-bold text-xl text-ink mb-2">Hapus Film?</h3>
+                <p class="text-ink-secondary text-sm mb-6">Film dan semua data terkait (ulasan, jadwal) akan dihapus permanen.</p>
+                <div class="flex gap-3">
+                    <button onclick="closeDeleteModal()" class="btn btn-outline btn-sm flex-1">Batal</button>
+                    <form id="deleteMovieForm" method="POST" class="flex-1">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm w-full justify-center border-red-600 text-red-600 hover:bg-red-600 hover:text-white">Ya, Hapus</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
     <script>
         let modalMode = 'add';
@@ -252,9 +271,24 @@
             document.body.style.overflow = '';
         }
 
+        function openDeleteModal(id) {
+            const form = document.getElementById('deleteMovieForm');
+            form.action = `/admin/movies/${id}`;
+            document.getElementById('deleteMovieModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteMovieModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
         // Close modal on Escape
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
+            if (e.key === 'Escape') {
+                closeModal();
+                closeDeleteModal();
+            }
         });
     </script>
     @endpush

@@ -61,14 +61,9 @@
                                                 class="btn btn-outline btn-sm">
                                             Edit
                                         </button>
-                                        <form method="POST" action="{{ route('admin.cinemas.destroy', $cinema) }}"
-                                              onsubmit="return confirm('Yakin ingin hapus bioskop ini? SEMUA studio dan jadwal tayang di dalamnya akan terhapus juga!')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm border-red-600 text-red-600 hover:bg-red-600 hover:text-white">
-                                                Hapus
-                                            </button>
-                                        </form>
+                                        <button onclick="openDeleteCinemaModal({{ $cinema->id }})" class="btn btn-sm border-red-600 text-red-600 hover:bg-red-600 hover:text-white">
+                                            Hapus
+                                        </button>
                                     </div>
                                 </td>
                             </tr>

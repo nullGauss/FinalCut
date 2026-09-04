@@ -77,7 +77,7 @@ class MovieController extends Controller
 
     public function show(Movie $movie)
     {
-        $movie->load('genres');
+        $movie->load(['genres', 'reviews.user']);
 
         $avgRating = $movie->reviews()->avg('rating');
         $reviewCount = $movie->reviews()->count();
