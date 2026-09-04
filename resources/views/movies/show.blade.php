@@ -183,9 +183,23 @@
                     
                     @forelse ($movie->reviews->where('user_id', '!=', auth()->id()) as $review)
                         <div class="card-sm p-4">
-                            <div class="flex items-start justify-between gap-4 mb-2">
-                                <div>
-                                    <span class="font-bold text-ink">{{ $review->user->name }}</span>
+                            <div class="flex items-start gap-3 mb-2">
+                                <!-- Avatar -->
+                                <a href="{{ route('profile.user', $review->user) }}" class="shrink-0">
+                                    @if ($review->user->foto)
+                                        <img src="{{ asset('uploads/avatars/' . $review->user->foto) }}" alt="{{ $review->user->name }}"
+                                             class="w-10 h-10 rounded-full border-1.5 border-ink object-cover">
+                                    @else
+                                        <div class="w-10 h-10 rounded-full border-1.5 border-ink bg-blue-bg text-blue-text flex items-center justify-center font-display font-bold text-sm">
+                                            {{ strtoupper(substr($review->user->name, 0, 1)) }}
+                                        </div>
+                                    @endif
+                                </a>
+
+                                <div class="flex-1 min-w-0">
+                                    <a href="{{ route('profile.user', $review->user) }}" class="font-bold text-ink hover:underline">
+                                        {{ $review->user->name }}
+                                    </a>
                                     <div class="flex items-center gap-1 mt-0.5">
                                         <span class="badge-yellow text-[10px]">★ {{ $review->rating }}/5</span>
                                         <span class="text-[10px] text-ink-secondary">{{ \Carbon\Carbon::parse($review->created_at)->diffForHumans() }}</span>

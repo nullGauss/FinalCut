@@ -18,9 +18,29 @@
             </p>
         </div>
 
+        <!-- Stats -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="card p-6 text-center">
+                <div class="font-display font-bold text-3xl text-ink">{{ $stats['total_users'] }}</div>
+                <div class="text-sm text-ink-secondary">Total User</div>
+            </div>
+            <div class="card p-6 text-center">
+                <div class="font-display font-bold text-3xl text-ink">{{ $stats['total_movies'] }}</div>
+                <div class="text-sm text-ink-secondary">Total Film</div>
+            </div>
+            <div class="card p-6 text-center">
+                <div class="font-display font-bold text-3xl text-ink">{{ $stats['total_bookings'] }}</div>
+                <div class="text-sm text-ink-secondary">Total Booking</div>
+            </div>
+            <div class="card p-6 text-center">
+                <div class="font-display font-bold text-3xl text-ink">Rp {{ number_format($stats['total_revenue'], 0, ',', '.') }}</div>
+                <div class="text-sm text-ink-secondary">Total Pendapatan</div>
+            </div>
+        </div>
+
         <!-- Quick Actions -->
         <h3 class="font-display font-bold text-lg text-ink mb-4">Kelola Data</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             <!-- Kelola Film -->
             <a href="{{ route('admin.movies.index') }}" class="card p-6 hover:shadow-hard-lg transition-all group">
                 <div class="w-10 h-10 bg-blue-bg text-blue-text rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
@@ -88,5 +108,48 @@
                 <p class="text-sm text-ink-secondary">Ubah role & status akun</p>
             </a>
         </div>
+
+        <!-- Recent Bookings -->
+        @if ($stats['recent_bookings']->count() > 0)
+            <h3 class="font-display font-bold text-lg text-ink mb-4">Booking Terbaru</h3>
+            <div class="card overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b-1.5 border-ink bg-background">
+                                <th class="text-left px-4 py-3 font-bold text-ink">User</th>
+                                <th class="text-left px-4 py-3 font-bold text-ink">Film</th>
+                                <th class="text-left px-4 py-3 font-bold text-ink">Status</th>
+                                <th class="text-right px-4 py-3 font-bold text-ink">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($stats['recent_bookings'] as $booking)
+                                <tr class="{{ !$loop->last ? 'border-b border-gray-200' : '' }}">
+                                    <td class="px-4 py-3">
+                                        <span class="font-medium text-ink">{{ $booking->user->name }}</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-ink-secondary">
+                                        {{ $booking->showtime->movie->title }}
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        @if ($booking->status === 'paid')
+                                            <span class="badge-green">Paid</span>
+                                        @elseif ($booking->status === 'cancelled')
+                                            <span class="badge-red">Cancelled</span>
+                                        @else
+                                            <span class="badge-yellow">Pending</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 text-right font-medium text-ink">
+                                        Rp {{ number_format($booking->total_price, 0, ',', '.') }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        @endif
     </div>
 </x-app-layout>

@@ -22,12 +22,50 @@ Route::get('/dashboard', function () {
     if (auth()->check() && auth()->user()->role === 'admin') {
         return redirect()->route('admin.dashboard');
     }
-    return view('dashboard');
+
+    $user = auth()->user();
+    $stats = [
+        'reviews' => $user->reviews()->count(),
+        'watchlist' => $user->watchlist()->count(),
+        'diary' => $user->watchedDiary()->count(),
+        'bookings' => $user->bookings()->count(),
+    ];
+
+    $nowShowing = \App\Models\Movie::with('genres')
+        ->whereHas('showtimes', function ($q) {
+            $q->where('show_date', '>=', now()->toDateString())
+              ->where('is_active', true);
+        })
+        ->withCount(['showtimes as active_showtimes_count' => function ($q) {
+            $q->where('show_date', '>=', now()->toDateString())
+              ->where('is_active', true);
+        }])
+        ->orderBy('active_showtimes_count', 'desc')
+        ->take(6)
+        ->get();
+
+    $recentBookings = $user->bookings()
+        ->with(['showtime.movie', 'showtime.studio.cinema'])
+        ->latest('booking_date')
+        ->take(3)
+        ->get();
+
+    return view('dashboard', compact('stats', 'nowShowing', 'recentBookings'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
-        return view('admin.dashboard');
+        $stats = [
+            'total_users' => \App\Models\User::count(),
+            'total_movies' => \App\Models\Movie::count(),
+            'total_bookings' => \App\Models\Booking::count(),
+            'total_revenue' => \App\Models\Booking::where('status', 'paid')->sum('total_price'),
+            'recent_bookings' => \App\Models\Booking::with(['user', 'showtime.movie'])
+                ->latest('booking_date')
+                ->take(5)
+                ->get(),
+        ];
+        return view('admin.dashboard', compact('stats'));
     })->name('dashboard');
 
     Route::get('/movies', [AdminMovieController::class, 'index'])->name('movies.index');

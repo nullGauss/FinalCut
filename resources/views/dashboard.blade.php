@@ -18,9 +18,29 @@
             </p>
         </div>
 
+        <!-- Stats -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="card p-4 text-center">
+                <div class="font-display font-bold text-2xl text-ink">{{ $stats['reviews'] }}</div>
+                <div class="text-xs text-ink-secondary">Review</div>
+            </div>
+            <div class="card p-4 text-center">
+                <div class="font-display font-bold text-2xl text-ink">{{ $stats['watchlist'] }}</div>
+                <div class="text-xs text-ink-secondary">Watchlist</div>
+            </div>
+            <div class="card p-4 text-center">
+                <div class="font-display font-bold text-2xl text-ink">{{ $stats['diary'] }}</div>
+                <div class="text-xs text-ink-secondary">Film Ditonton</div>
+            </div>
+            <div class="card p-4 text-center">
+                <div class="font-display font-bold text-2xl text-ink">{{ $stats['bookings'] }}</div>
+                <div class="text-xs text-ink-secondary">Booking</div>
+            </div>
+        </div>
+
         <!-- Quick Actions -->
         <h3 class="font-display font-bold text-lg text-ink mb-4">Menu Cepat</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             <!-- Browse Film -->
             <a href="{{ route('movies.index') }}" class="card p-6 hover:shadow-hard-lg transition-all group">
                 <div class="w-10 h-10 bg-blue-bg text-blue-text rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
@@ -54,5 +74,60 @@
                 <p class="text-sm text-ink-secondary">Pesan tiket bioskop sekarang</p>
             </a>
         </div>
+
+        <!-- Now Showing -->
+        @if ($nowShowing->count() > 0)
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-display font-bold text-lg text-ink">Sedang Tayang</h3>
+                    <a href="{{ route('movies.nowShowing') }}" class="text-sm text-blue-text hover:underline">Lihat Semua</a>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                    @foreach ($nowShowing as $movie)
+                        <a href="{{ route('movies.show', $movie) }}" class="group block">
+                            <div class="aspect-[2/3] border-1.5 border-ink rounded-md overflow-hidden shadow-hard-sm group-hover:shadow-hard-md transition-shadow">
+                                @if ($movie->poster)
+                                    <img src="{{ $movie->poster }}" alt="{{ $movie->title }}" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full bg-background flex items-center justify-center">
+                                        <span class="font-display font-bold text-xs text-gray-300 transform -rotate-45">FinalCut</span>
+                                    </div>
+                                @endif
+                            </div>
+                            <p class="text-xs text-ink mt-2 line-clamp-1 font-medium">{{ $movie->title }}</p>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+        <!-- Recent Bookings -->
+        @if ($recentBookings->count() > 0)
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-display font-bold text-lg text-ink">Booking Terakhir</h3>
+                    <a href="{{ route('bookings.history') }}" class="text-sm text-blue-text hover:underline">Lihat Semua</a>
+                </div>
+                <div class="space-y-3">
+                    @foreach ($recentBookings as $booking)
+                        <a href="{{ route('bookings.show', $booking) }}" class="card-sm p-4 block hover:border-ink transition-colors">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold text-sm text-ink">{{ $booking->showtime->movie->title }}</span>
+                                    <p class="text-xs text-ink-secondary">{{ $booking->showtime->studio->cinema->name }} &middot; {{ $booking->showtime->show_date->format('d M Y') }}</p>
+                                </div>
+                                @if ($booking->status === 'paid')
+                                    <span class="badge-green">Paid</span>
+                                @elseif ($booking->status === 'cancelled')
+                                    <span class="badge-red">Cancelled</span>
+                                @else
+                                    <span class="badge-yellow">Pending</span>
+                                @endif
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </div>
 </x-app-layout>

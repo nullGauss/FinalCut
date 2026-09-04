@@ -31,12 +31,12 @@ class BookingController extends Controller
 
     public function selectSeats(Showtime $showtime)
     {
+        $showtime->load(['movie', 'studio.cinema', 'studio.seats']);
+
         if (!$showtime->is_active) {
             return redirect()->route('bookings.selectShowtime', $showtime->movie)
                              ->with('error', 'Jadwal tayang ini sudah tidak tersedia.');
         }
-
-        $showtime->load(['movie', 'studio.cinema', 'studio.seats']);
 
         $studio = $showtime->studio;
         $allSeats = $studio->seats->sortBy('seat_number');
