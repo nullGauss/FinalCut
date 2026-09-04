@@ -59,6 +59,10 @@
                            class="text-sm font-medium {{ request()->routeIs('bookings.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
                             Riwayat
                         </a>
+                        <a href="{{ route('collection.index') }}"
+                           class="text-sm font-medium {{ request()->routeIs('collection.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                            Koleksi
+                        </a>
                     @endif
                 </div>
             </div>
@@ -121,6 +125,7 @@
                 <a href="{{ route('movies.index') }}" class="block text-sm font-medium text-ink">Browse Film</a>
                 <a href="{{ route('movies.nowShowing') }}" class="block text-sm font-medium text-ink">Sedang Tayang</a>
                 <a href="{{ route('bookings.history') }}" class="block text-sm font-medium text-ink">Riwayat</a>
+                <a href="{{ route('collection.index') }}" class="block text-sm font-medium text-ink">Koleksi</a>
             @endif
         </div>
         <div class="section py-4 border-t border-ink">

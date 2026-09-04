@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ShowtimeController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
@@ -84,7 +85,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/movies/{movie}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
-    // Booking
+    // Watchlist
+    Route::post('/movies/{movie}/watchlist', [CollectionController::class, 'toggleWatchlist'])->name('watchlist.toggle');
+    Route::delete('/movies/{movie}/watchlist', [CollectionController::class, 'removeWatchlist'])->name('watchlist.remove');
+
+    // Diary
+    Route::post('/movies/{movie}/diary', [CollectionController::class, 'addDiary'])->name('diary.add');
+    Route::delete('/movies/{movie}/diary', [CollectionController::class, 'removeDiary'])->name('diary.remove');
+
+    // Koleksi Saya
+    Route::get('/collection', [CollectionController::class, 'index'])->name('collection.index');
+
+    // Profile
     Route::get('/movies/{movie}/book', [BookingController::class, 'selectShowtime'])->name('bookings.selectShowtime');
     Route::get('/bookings/{showtime}/seats', [BookingController::class, 'selectSeats'])->name('bookings.selectSeats');
     Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');

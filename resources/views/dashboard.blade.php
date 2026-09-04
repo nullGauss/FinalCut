@@ -33,7 +33,7 @@
             </a>
 
             <!-- My Watchlist -->
-            <a href="#" class="card p-6 hover:shadow-hard-lg transition-all group">
+            <a href="{{ route('collection.index') }}" class="card p-6 hover:shadow-hard-lg transition-all group">
                 <div class="w-10 h-10 bg-yellow-bg text-yellow-text rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />

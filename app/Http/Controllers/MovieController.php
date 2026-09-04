@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Genre;
 use App\Models\Movie;
+use App\Models\Watchlist;
+use App\Models\WatchedDiary;
 use Illuminate\Http\Request;
 
 class MovieController extends Controller
@@ -85,6 +87,14 @@ class MovieController extends Controller
             ->where('is_active', true)
             ->exists();
 
-        return view('movies.show', compact('movie', 'avgRating', 'reviewCount', 'hasShowtimes'));
+        $isWatchlisted = Watchlist::where('user_id', auth()->id())
+            ->where('movie_id', $movie->id)
+            ->exists();
+
+        $isDiaried = WatchedDiary::where('user_id', auth()->id())
+            ->where('movie_id', $movie->id)
+            ->exists();
+
+        return view('movies.show', compact('movie', 'avgRating', 'reviewCount', 'hasShowtimes', 'isWatchlisted', 'isDiaried'));
     }
 }

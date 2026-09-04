@@ -59,4 +59,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Booking::class);
     }
+
+    public function watchlist()
+    {
+        return $this->hasMany(Watchlist::class);
+    }
+
+    public function watchedDiary()
+    {
+        return $this->hasMany(WatchedDiary::class);
+    }
 }

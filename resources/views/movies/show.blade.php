@@ -80,8 +80,14 @@
                                     Pesan Tiket
                                 </a>
                             @endif
-                            <button class="btn btn-outline" onclick="alert('Fitur Watchlist dikerjakan di Minggu 7')">
-                                + Watchlist
+                            <form method="POST" action="{{ route('watchlist.toggle', $movie) }}">
+                                @csrf
+                                <button type="submit" class="btn {{ $isWatchlisted ? 'btn-primary' : 'btn-outline' }}">
+                                    {{ $isWatchlisted ? '✓ Watchlist' : '+ Watchlist' }}
+                                </button>
+                            </form>
+                            <button type="button" onclick="openDiaryModal()" class="btn btn-outline">
+                                {{ $isDiaried ? '✓ Diary' : '+ Diary' }}
                             </button>
                         </div>
                     </div>
@@ -194,4 +200,42 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Tambah Diary -->
+    <div id="diaryModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-ink/50" onclick="closeDiaryModal()"></div>
+        <div class="absolute inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-sm bg-surface border-1.5 border-ink shadow-hard-lg rounded-xl overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b-1.5 border-ink">
+                <h2 class="font-display font-bold text-lg text-ink">Tanggal Nonton</h2>
+                <button onclick="closeDiaryModal()" class="text-ink-secondary hover:text-ink">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <form method="POST" action="{{ route('diary.add', $movie) }}" class="p-6">
+                @csrf
+                <div class="mb-6">
+                    <label for="watched_date" class="label">Kapan kamu nonton film ini? <span class="text-red-600">*</span></label>
+                    <input type="date" id="watched_date" name="watched_date" class="input" max="{{ now()->format('Y-m-d') }}" required>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="closeDiaryModal()" class="btn btn-outline btn-sm flex-1">Batal</button>
+                    <button type="submit" class="btn btn-primary btn-sm flex-1">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @push('scripts')
+    <script>
+        function openDiaryModal() {
+            document.getElementById('diaryModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDiaryModal() {
+            document.getElementById('diaryModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    </script>
+    @endpush
 </x-app-layout>

@@ -35,4 +35,14 @@ class Movie extends Model
     {
         return $this->hasMany(Showtime::class);
     }
+
+    public function watchlists()
+    {
+        return $this->hasMany(Watchlist::class);
+    }
+
+    public function watchedDiaries()
+    {
+        return $this->hasMany(WatchedDiary::class);
+    }
 }
