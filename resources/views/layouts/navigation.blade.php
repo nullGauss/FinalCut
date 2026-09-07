@@ -1,68 +1,69 @@
 <nav x-data="{ open: false }" class="bg-surface border-b-1.5 border-ink">
     <!-- Primary Navigation Menu -->
-    <div class="section">
+    <div class="section py-5">
         <div class="flex justify-between h-16">
             <!-- Left: Logo + Links -->
             <div class="flex items-center gap-8">
                 <!-- Logo -->
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-2 shrink-0">
-                    <span class="font-display font-bold text-xl text-ink">Final<span class="text-blue-text">Cut</span></span>
+                    <span class="font-display font-bold text-xl text-ink">Final<span
+                            class="text-blue-text">Cut</span></span>
                 </a>
 
                 <!-- Nav Links -->
                 <div class="hidden sm:flex items-center gap-6">
                     @if (auth()->user()->role === 'admin')
-                        <!-- Admin Navigation -->
-                        <a href="{{ route('admin.dashboard') }}"
-                           class="text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
-                            Dashboard
-                        </a>
-                        <a href="{{ route('admin.movies.index') }}"
-                           class="text-sm font-medium {{ request()->routeIs('admin.movies.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
-                            Kelola Film
-                        </a>
-                        <a href="{{ route('admin.cinemas.index') }}"
-                           class="text-sm font-medium {{ request()->routeIs('admin.cinemas.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
-                            Kelola Bioskop
-                        </a>
-                        <a href="{{ route('admin.showtimes.index') }}"
-                           class="text-sm font-medium {{ request()->routeIs('admin.showtimes.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
-                            Jadwal Tayang
-                        </a>
-                        <a href="{{ route('admin.transactions.index') }}"
-                           class="text-sm font-medium {{ request()->routeIs('admin.transactions.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
-                            Transaksi
-                        </a>
-                        <a href="{{ route('admin.reports.index') }}"
-                           class="text-sm font-medium {{ request()->routeIs('admin.reports.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
-                            Laporan
-                        </a>
-                        <a href="{{ route('admin.users.index') }}"
-                           class="text-sm font-medium {{ request()->routeIs('admin.users.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
-                            Kelola User
-                        </a>
+                    <!-- Admin Navigation -->
+                    <a href="{{ route('admin.dashboard') }}"
+                        class="text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                        Dashboard
+                    </a>
+                    <a href="{{ route('admin.movies.index') }}"
+                        class="text-sm font-medium {{ request()->routeIs('admin.movies.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                        Kelola Film
+                    </a>
+                    <a href="{{ route('admin.cinemas.index') }}"
+                        class="text-sm font-medium {{ request()->routeIs('admin.cinemas.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                        Kelola Bioskop
+                    </a>
+                    <a href="{{ route('admin.showtimes.index') }}"
+                        class="text-sm font-medium {{ request()->routeIs('admin.showtimes.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                        Jadwal Tayang
+                    </a>
+                    <a href="{{ route('admin.transactions.index') }}"
+                        class="text-sm font-medium {{ request()->routeIs('admin.transactions.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                        Transaksi
+                    </a>
+                    <a href="{{ route('admin.reports.index') }}"
+                        class="text-sm font-medium {{ request()->routeIs('admin.reports.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                        Laporan
+                    </a>
+                    <a href="{{ route('admin.users.index') }}"
+                        class="text-sm font-medium {{ request()->routeIs('admin.users.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                        Kelola User
+                    </a>
                     @else
-                        <!-- User Navigation -->
-                        <a href="{{ route('dashboard') }}"
-                           class="text-sm font-medium {{ request()->routeIs('dashboard') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
-                            Dashboard
-                        </a>
-                        <a href="{{ route('movies.index') }}"
-                           class="text-sm font-medium {{ request()->routeIs('movies.index') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
-                            Browse Film
-                        </a>
-                        <a href="{{ route('movies.nowShowing') }}"
-                           class="text-sm font-medium {{ request()->routeIs('movies.nowShowing') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
-                            Sedang Tayang
-                        </a>
-                        <a href="{{ route('bookings.history') }}"
-                           class="text-sm font-medium {{ request()->routeIs('bookings.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
-                            Riwayat
-                        </a>
-                        <a href="{{ route('collection.index') }}"
-                           class="text-sm font-medium {{ request()->routeIs('collection.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
-                            Koleksi
-                        </a>
+                    <!-- User Navigation -->
+                    <a href="{{ route('dashboard') }}"
+                        class="text-sm font-medium {{ request()->routeIs('dashboard') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                        Dashboard
+                    </a>
+                    <a href="{{ route('movies.index') }}"
+                        class="text-sm font-medium {{ request()->routeIs('movies.index') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                        Browse Film
+                    </a>
+                    <a href="{{ route('movies.nowShowing') }}"
+                        class="text-sm font-medium {{ request()->routeIs('movies.nowShowing') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                        Sedang Tayang
+                    </a>
+                    <a href="{{ route('bookings.history') }}"
+                        class="text-sm font-medium {{ request()->routeIs('bookings.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                        Riwayat
+                    </a>
+                    <a href="{{ route('collection.index') }}"
+                        class="text-sm font-medium {{ request()->routeIs('collection.*') ? 'text-ink' : 'text-ink-secondary hover:text-ink' }} transition-colors">
+                        Koleksi
+                    </a>
                     @endif
                 </div>
             </div>
@@ -72,11 +73,13 @@
                 <!-- User name + dropdown -->
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open"
-                            class="inline-flex items-center gap-2 px-4 py-2 border-1.5 border-ink rounded-full text-sm font-medium text-ink hover:bg-ink hover:text-surface transition-all">
+                        class="inline-flex items-center gap-2 px-4 py-2 border-1.5 border-ink rounded-full text-sm font-medium text-ink hover:bg-ink hover:text-surface transition-all">
                         @if (Auth::user()->foto)
-                            <img src="{{ asset('uploads/avatars/' . Auth::user()->foto) }}" alt="{{ Auth::user()->name }}" class="w-6 h-6 rounded-full object-cover border border-ink">
+                        <img src="{{ asset('uploads/avatars/' . Auth::user()->foto) }}" alt="{{ Auth::user()->name }}"
+                            class="w-6 h-6 rounded-full object-cover border border-ink">
                         @else
-                            <span class="w-6 h-6 rounded-full bg-blue-bg text-blue-text flex items-center justify-center text-xs font-bold border border-ink">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                        <span
+                            class="w-6 h-6 rounded-full bg-blue-bg text-blue-text flex items-center justify-center text-xs font-bold border border-ink">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
                         @endif
                         {{ Auth::user()->name }}
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,13 +89,15 @@
 
                     <!-- Dropdown -->
                     <div x-show="open" @click.away="open = false" x-transition
-                         class="absolute right-0 mt-2 w-48 card-sm py-1 z-50">
-                        <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-sm text-ink hover:bg-background transition-colors">
+                        class="absolute right-0 mt-2 w-48 card-sm py-1 z-50">
+                        <a href="{{ route('profile.show') }}"
+                            class="block px-4 py-2 text-sm text-ink hover:bg-background transition-colors">
                             Profile
                         </a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-ink hover:bg-background transition-colors">
+                            <button type="submit"
+                                class="w-full text-left px-4 py-2 text-sm text-ink hover:bg-background transition-colors">
                                 Log Out
                             </button>
                         </form>
@@ -102,10 +107,13 @@
 
             <!-- Hamburger (mobile) -->
             <div class="flex items-center sm:hidden">
-                <button @click="open = !open" class="inline-flex items-center justify-center p-2 border-1.5 border-ink rounded-md text-ink hover:bg-ink hover:text-surface transition-all">
+                <button @click="open = !open"
+                    class="inline-flex items-center justify-center p-2 border-1.5 border-ink rounded-md text-ink hover:bg-ink hover:text-surface transition-all">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': !open }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        <path :class="{'hidden': open, 'inline-flex': !open }" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        <path :class="{'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
@@ -116,36 +124,39 @@
     <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden border-t border-ink">
         <div class="section py-4 space-y-2">
             @if (auth()->user()->role === 'admin')
-                <!-- Admin Mobile Navigation -->
-                <a href="{{ route('admin.dashboard') }}" class="block text-sm font-medium text-ink">Dashboard</a>
-                <a href="{{ route('admin.movies.index') }}" class="block text-sm font-medium text-ink">Kelola Film</a>
-                <a href="{{ route('admin.cinemas.index') }}" class="block text-sm font-medium text-ink">Kelola Bioskop</a>
-                <a href="{{ route('admin.showtimes.index') }}" class="block text-sm font-medium text-ink">Jadwal Tayang</a>
-                <a href="{{ route('admin.transactions.index') }}" class="block text-sm font-medium text-ink">Transaksi</a>
-                <a href="{{ route('admin.reports.index') }}" class="block text-sm font-medium text-ink">Laporan</a>
-                <a href="{{ route('admin.users.index') }}" class="block text-sm font-medium text-ink">Kelola User</a>
+            <!-- Admin Mobile Navigation -->
+            <a href="{{ route('admin.dashboard') }}" class="block text-sm font-medium text-ink">Dashboard</a>
+            <a href="{{ route('admin.movies.index') }}" class="block text-sm font-medium text-ink">Kelola Film</a>
+            <a href="{{ route('admin.cinemas.index') }}" class="block text-sm font-medium text-ink">Kelola Bioskop</a>
+            <a href="{{ route('admin.showtimes.index') }}" class="block text-sm font-medium text-ink">Jadwal Tayang</a>
+            <a href="{{ route('admin.transactions.index') }}" class="block text-sm font-medium text-ink">Transaksi</a>
+            <a href="{{ route('admin.reports.index') }}" class="block text-sm font-medium text-ink">Laporan</a>
+            <a href="{{ route('admin.users.index') }}" class="block text-sm font-medium text-ink">Kelola User</a>
             @else
-                <!-- User Mobile Navigation -->
-                <a href="{{ route('dashboard') }}" class="block text-sm font-medium text-ink">Dashboard</a>
-                <a href="{{ route('movies.index') }}" class="block text-sm font-medium text-ink">Browse Film</a>
-                <a href="{{ route('movies.nowShowing') }}" class="block text-sm font-medium text-ink">Sedang Tayang</a>
-                <a href="{{ route('bookings.history') }}" class="block text-sm font-medium text-ink">Riwayat</a>
-                <a href="{{ route('collection.index') }}" class="block text-sm font-medium text-ink">Koleksi</a>
+            <!-- User Mobile Navigation -->
+            <a href="{{ route('dashboard') }}" class="block text-sm font-medium text-ink">Dashboard</a>
+            <a href="{{ route('movies.index') }}" class="block text-sm font-medium text-ink">Browse Film</a>
+            <a href="{{ route('movies.nowShowing') }}" class="block text-sm font-medium text-ink">Sedang Tayang</a>
+            <a href="{{ route('bookings.history') }}" class="block text-sm font-medium text-ink">Riwayat</a>
+            <a href="{{ route('collection.index') }}" class="block text-sm font-medium text-ink">Koleksi</a>
             @endif
         </div>
         <div class="section py-4 border-t border-ink">
             <div class="flex items-center gap-3 mb-1">
                 @if (Auth::user()->foto)
-                    <img src="{{ asset('uploads/avatars/' . Auth::user()->foto) }}" alt="{{ Auth::user()->name }}" class="w-8 h-8 rounded-full object-cover border border-ink">
+                <img src="{{ asset('uploads/avatars/' . Auth::user()->foto) }}" alt="{{ Auth::user()->name }}"
+                    class="w-8 h-8 rounded-full object-cover border border-ink">
                 @else
-                    <span class="w-8 h-8 rounded-full bg-blue-bg text-blue-text flex items-center justify-center text-sm font-bold border border-ink">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                <span
+                    class="w-8 h-8 rounded-full bg-blue-bg text-blue-text flex items-center justify-center text-sm font-bold border border-ink">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
                 @endif
                 <div>
                     <div class="text-sm font-medium text-ink">{{ Auth::user()->name }}</div>
                     <div class="text-xs text-ink-secondary">{{ Auth::user()->email }}</div>
                 </div>
             </div>
-            <a href="{{ route('profile.show') }}" class="block mt-3 text-sm text-ink-secondary hover:text-ink">Profile</a>
+            <a href="{{ route('profile.show') }}"
+                class="block mt-3 text-sm text-ink-secondary hover:text-ink">Profile</a>
             <form method="POST" action="{{ route('logout') }}" class="mt-2">
                 @csrf
                 <button type="submit" class="text-sm text-ink-secondary hover:text-ink">Log Out</button>

@@ -63,15 +63,16 @@ class UserController extends Controller
             return redirect()->route('admin.users.index')->with('error', 'Tidak bisa menonaktifkan akun sendiri.');
         }
 
-        $user->update(['is_active' => !$user->is_active]);
+        $newStatus = !$user->is_active;
+        $user->update(['is_active' => $newStatus]);
 
-        $status = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        $status = $newStatus ? 'diaktifkan' : 'dinonaktifkan';
         return redirect()->route('admin.users.index')->with('success', "User {$user->name} berhasil {$status}.");
     }
 
     public function resetPassword(User $user)
     {
-        $user->update(['password' => Hash::make('password')]);
+        $user->update(['password' => 'password']);
 
         return redirect()->route('admin.users.index')->with('success', "Password {$user->name} berhasil direset ke default ('password').");
     }

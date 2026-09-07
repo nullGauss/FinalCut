@@ -54,7 +54,7 @@
                                 </td>
                                 <td class="px-4 py-3 text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        <a href="{{ route('admin.cinemas.studios', $cinema) }}" class="btn btn-yellow btn-sm">
+                                        <a href="{{ route('admin.cinemas.studios', $cinema) }}" class="btn btn-outline btn-sm">
                                             Kelola Studio
                                         </a>
                                         <button onclick="openModal('edit', {{ $cinema->id }})"

@@ -70,6 +70,10 @@
                                 <td class="px-4 py-3 text-ink-secondary">{{ $movie->director ?: '-' }}</td>
                                 <td class="px-4 py-3 text-right">
                                     <div class="flex items-center justify-end gap-2">
+                                        <a href="{{ route('admin.movies.show', $movie) }}"
+                                           class="btn btn-outline btn-sm">
+                                            Detail
+                                        </a>
                                         <button onclick="openModal('edit', {{ $movie->id }})"
                                                 class="btn btn-outline btn-sm">
                                             Edit

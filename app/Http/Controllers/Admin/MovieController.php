@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Genre;
 use App\Models\Movie;
+use App\Models\Review;
 use Illuminate\Http\Request;
 
 class MovieController extends Controller
@@ -98,5 +99,31 @@ class MovieController extends Controller
         $movie->delete();
 
         return redirect()->route('admin.movies.index')->with('success', 'Film berhasil dihapus.');
+    }
+
+    public function show(Movie $movie)
+    {
+        $movie->load(['genres', 'reviews.user', 'showtimes.studio.cinema']);
+
+        $movie->setRelation('reviews', $movie->reviews->sortByDesc('created_at'));
+        $movie->setRelation('showtimes', $movie->showtimes->sortByDesc(function ($s) {
+            return $s->show_date->format('Y-m-d') . ' ' . $s->show_time;
+        }));
+
+        $avgRating = $movie->reviews->avg('rating');
+        $totalReviews = $movie->reviews->count();
+
+        return view('admin.movies.show', compact('movie', 'avgRating', 'totalReviews'));
+    }
+
+    public function destroyReview(Movie $movie, Review $review)
+    {
+        if ($review->movie_id !== $movie->id) {
+            abort(404);
+        }
+
+        $review->delete();
+
+        return redirect()->route('admin.movies.show', $movie)->with('success', 'Ulasan berhasil dihapus.');
     }
 }

@@ -62,7 +62,8 @@ class BookingController extends Controller
     {
         $validated = $request->validate([
             'showtime_id' => 'required|exists:showtimes,id',
-            'seat_ids' => 'required|string',
+            'seat_ids' => 'required|array|min:1',
+            'seat_ids.*' => 'exists:seats,id',
         ]);
 
         $showtime = Showtime::findOrFail($validated['showtime_id']);
@@ -71,7 +72,7 @@ class BookingController extends Controller
             return back()->withErrors(['showtime_id' => 'Jadwal tayang ini sudah tidak tersedia.']);
         }
 
-        $seatIds = array_filter(explode(',', $validated['seat_ids']));
+        $seatIds = $validated['seat_ids'];
 
         if (empty($seatIds)) {
             return back()->withErrors(['seat_ids' => 'Pilih minimal satu kursi.']);
@@ -98,6 +99,7 @@ class BookingController extends Controller
             'showtime_id' => $showtime->id,
             'total_price' => $totalPrice,
             'status' => 'pending',
+            'booking_date' => now(),
         ]);
 
         $booking->seats()->sync($seatIds);

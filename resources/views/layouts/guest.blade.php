@@ -30,5 +30,8 @@
             </p>
         </div>
     </div>
+
+    <!-- Footer -->
+    @include('components.footer')
 </body>
 </html>

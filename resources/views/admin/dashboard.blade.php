@@ -41,7 +41,6 @@
         <!-- Quick Actions -->
         <h3 class="font-display font-bold text-lg text-ink mb-4">Kelola Data</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-            <!-- Kelola Film -->
             <a href="{{ route('admin.movies.index') }}" class="card p-6 hover:shadow-hard-lg transition-all group">
                 <div class="w-10 h-10 bg-blue-bg text-blue-text rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -52,7 +51,6 @@
                 <p class="text-sm text-ink-secondary">Tambah, edit, hapus data film</p>
             </a>
 
-            <!-- Kelola Bioskop -->
             <a href="{{ route('admin.cinemas.index') }}" class="card p-6 hover:shadow-hard-lg transition-all group">
                 <div class="w-10 h-10 bg-yellow-bg text-yellow-text rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,7 +62,6 @@
                 <p class="text-sm text-ink-secondary">Kelola bioskop & studio</p>
             </a>
 
-            <!-- Kelola Jadwal -->
             <a href="{{ route('admin.showtimes.index') }}" class="card p-6 hover:shadow-hard-lg transition-all group">
                 <div class="w-10 h-10 bg-blue-bg text-blue-text rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,7 +72,6 @@
                 <p class="text-sm text-ink-secondary">Atur jadwal tayang film</p>
             </a>
 
-            <!-- Kelola Transaksi -->
             <a href="{{ route('admin.transactions.index') }}" class="card p-6 hover:shadow-hard-lg transition-all group">
                 <div class="w-10 h-10 bg-yellow-bg text-yellow-text rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,7 +82,6 @@
                 <p class="text-sm text-ink-secondary">Pantau semua booking user</p>
             </a>
 
-            <!-- Laporan -->
             <a href="{{ route('admin.reports.index') }}" class="card p-6 hover:shadow-hard-lg transition-all group">
                 <div class="w-10 h-10 bg-blue-bg text-blue-text rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,7 +92,6 @@
                 <p class="text-sm text-ink-secondary">Grafik pendapatan & export PDF</p>
             </a>
 
-            <!-- Kelola User -->
             <a href="{{ route('admin.users.index') }}" class="card p-6 hover:shadow-hard-lg transition-all group">
                 <div class="w-10 h-10 bg-yellow-bg text-yellow-text rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,6 +101,63 @@
                 <h4 class="font-display font-bold text-ink mb-1">Kelola User</h4>
                 <p class="text-sm text-ink-secondary">Ubah role & status akun</p>
             </a>
+        </div>
+
+        <!-- Top Movies & Pending Bookings -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Top 5 Film Terlaris -->
+            @if ($stats['top_movies']->count() > 0)
+                <div class="card">
+                    <div class="p-4 border-b-1.5 border-ink">
+                        <h3 class="font-display font-bold text-ink">Film Terlaris</h3>
+                    </div>
+                    <div class="p-4">
+                        @foreach ($stats['top_movies'] as $index => $movie)
+                            <div class="flex items-center gap-3 {{ !$loop->last ? 'mb-3 pb-3 border-b border-gray-200' : '' }}">
+                                <span class="font-display font-bold text-ink text-lg w-6">{{ $index + 1 }}</span>
+                                @if ($movie['poster'])
+                                    <img src="{{ $movie['poster'] }}" alt="{{ $movie['title'] }}" class="w-10 h-14 object-cover border border-ink" onerror="this.outerHTML='<div class=\'w-10 h-14 bg-gray-100 border border-ink flex items-center justify-center text-xs text-gray-400\'>?</div>'">
+                                @else
+                                    <div class="w-10 h-14 bg-gray-100 border border-ink flex items-center justify-center text-xs text-ink-secondary">No<br>Poster</div>
+                                @endif
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-medium text-ink truncate">{{ $movie['title'] }}</div>
+                                    <div class="text-xs text-ink-secondary">{{ $movie['total_bookings'] }} booking · Rp {{ number_format($movie['total_revenue'], 0, ',', '.') }}</div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @else
+                <div class="card p-8 text-center">
+                    <p class="text-ink-secondary">Belum ada data booking.</p>
+                </div>
+            @endif
+
+            <!-- Status Summary -->
+            <div class="card">
+                <div class="p-4 border-b-1.5 border-ink">
+                    <h3 class="font-display font-bold text-ink">Status Booking</h3>
+                </div>
+                <div class="p-4 space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <span class="font-medium text-green-700">Lunas (Paid)</span>
+                        <span class="font-display font-bold text-green-700">{{ \App\Models\Booking::where('status', 'paid')->count() }}</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <span class="font-medium text-yellow-700">Menunggu (Pending)</span>
+                        <span class="font-display font-bold text-yellow-700">{{ $stats['pending_bookings'] }}</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg">
+                        <span class="font-medium text-red-700">Dibatalkan</span>
+                        <span class="font-display font-bold text-red-700">{{ \App\Models\Booking::where('status', 'cancelled')->count() }}</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <span class="font-medium text-blue-700">Jadwal Aktif</span>
+                        <span class="font-display font-bold text-blue-700">{{ $stats['active_showtimes'] }}</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Recent Bookings -->
@@ -119,18 +170,24 @@
                             <tr class="border-b-1.5 border-ink bg-background">
                                 <th class="text-left px-4 py-3 font-bold text-ink">User</th>
                                 <th class="text-left px-4 py-3 font-bold text-ink">Film</th>
+                                <th class="text-left px-4 py-3 font-bold text-ink">Bioskop</th>
                                 <th class="text-left px-4 py-3 font-bold text-ink">Status</th>
                                 <th class="text-right px-4 py-3 font-bold text-ink">Total</th>
+                                <th class="text-right px-4 py-3 font-bold text-ink">Tanggal</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($stats['recent_bookings'] as $booking)
-                                <tr class="{{ !$loop->last ? 'border-b border-gray-200' : '' }}">
+                                <tr class="{{ !$loop->last ? 'border-b border-gray-200' : '' }} hover:bg-gray-50 transition-colors">
                                     <td class="px-4 py-3">
                                         <span class="font-medium text-ink">{{ $booking->user->name }}</span>
                                     </td>
                                     <td class="px-4 py-3 text-ink-secondary">
                                         {{ $booking->showtime->movie->title }}
+                                    </td>
+                                    <td class="px-4 py-3 text-ink-secondary text-xs">
+                                        {{ $booking->showtime->studio->cinema->name ?? '-' }}<br>
+                                        Studio {{ $booking->showtime->studio->name ?? '-' }}
                                     </td>
                                     <td class="px-4 py-3">
                                         @if ($booking->status === 'paid')
@@ -143,6 +200,9 @@
                                     </td>
                                     <td class="px-4 py-3 text-right font-medium text-ink">
                                         Rp {{ number_format($booking->total_price, 0, ',', '.') }}
+                                    </td>
+                                    <td class="px-4 py-3 text-right text-xs text-ink-secondary">
+                                        {{ $booking->booking_date->format('d M Y') }}
                                     </td>
                                 </tr>
                             @endforeach

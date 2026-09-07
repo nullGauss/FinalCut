@@ -15,6 +15,12 @@ use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        if (auth()->user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route('dashboard');
+    }
     return view('welcome');
 });
 
@@ -31,6 +37,7 @@ Route::get('/dashboard', function () {
         'bookings' => $user->bookings()->count(),
     ];
 
+    // Now showing movies
     $nowShowing = \App\Models\Movie::with('genres')
         ->whereHas('showtimes', function ($q) {
             $q->where('show_date', '>=', now()->toDateString())
@@ -44,13 +51,38 @@ Route::get('/dashboard', function () {
         ->take(6)
         ->get();
 
+    // Spotlight: top 2 movies by review count (most reviewed)
+    $spotlight = \App\Models\Movie::with('genres')
+        ->whereHas('reviews')
+        ->withCount('reviews')
+        ->orderBy('reviews_count', 'desc')
+        ->take(2)
+        ->get();
+
+    // Popular reviews from other users (latest 5)
+    $popularReviews = \App\Models\Review::with(['user', 'movie'])
+        ->where('user_id', '!=', $user->id)
+        ->latest()
+        ->take(5)
+        ->get();
+
+    // Recent collection (watchlist + diary, merged & sorted by created_at)
+    $recentWatchlist = $user->watchlist()->with('movie')->latest()->take(4)->get()->map(function ($item) {
+        return ['type' => 'watchlist', 'movie' => $item->movie, 'date' => $item->created_at];
+    });
+    $recentDiary = $user->watchedDiary()->with('movie')->latest()->take(4)->get()->map(function ($item) {
+        return ['type' => 'diary', 'movie' => $item->movie, 'date' => $item->created_at, 'watched_date' => $item->watched_date];
+    });
+    $recentCollection = $recentWatchlist->concat($recentDiary)->sortByDesc('date')->take(6)->values();
+
+    // Recent bookings
     $recentBookings = $user->bookings()
         ->with(['showtime.movie', 'showtime.studio.cinema'])
         ->latest('booking_date')
         ->take(3)
         ->get();
 
-    return view('dashboard', compact('stats', 'nowShowing', 'recentBookings'));
+    return view('dashboard', compact('stats', 'nowShowing', 'recentBookings', 'spotlight', 'popularReviews', 'recentCollection'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -60,19 +92,42 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
             'total_movies' => \App\Models\Movie::count(),
             'total_bookings' => \App\Models\Booking::count(),
             'total_revenue' => \App\Models\Booking::where('status', 'paid')->sum('total_price'),
-            'recent_bookings' => \App\Models\Booking::with(['user', 'showtime.movie'])
+            'recent_bookings' => \App\Models\Booking::with(['user', 'showtime.movie', 'showtime.studio.cinema'])
                 ->latest('booking_date')
                 ->take(5)
                 ->get(),
+            'top_movies' => \App\Models\Booking::where('status', '!=', 'cancelled')
+                ->with('showtime.movie')
+                ->get()
+                ->groupBy('showtime.movie.title')
+                ->map(function ($group) {
+                    $movie = $group->first()->showtime->movie;
+                    return [
+                        'id' => $movie->id,
+                        'title' => $movie->title,
+                        'poster' => $movie->poster,
+                        'total_bookings' => $group->count(),
+                        'total_revenue' => $group->sum('total_price'),
+                    ];
+                })
+                ->sortByDesc('total_bookings')
+                ->take(5)
+                ->values(),
+            'pending_bookings' => \App\Models\Booking::where('status', 'pending')->count(),
+            'active_showtimes' => \App\Models\Showtime::where('show_date', '>=', now()->toDateString())
+                ->where('is_active', true)
+                ->count(),
         ];
         return view('admin.dashboard', compact('stats'));
     })->name('dashboard');
 
     Route::get('/movies', [AdminMovieController::class, 'index'])->name('movies.index');
+    Route::get('/movies/{movie}', [AdminMovieController::class, 'show'])->name('movies.show');
     Route::post('/movies', [AdminMovieController::class, 'store'])->name('movies.store');
     Route::get('/movies/{movie}/edit', [AdminMovieController::class, 'edit'])->name('movies.edit');
     Route::put('/movies/{movie}', [AdminMovieController::class, 'update'])->name('movies.update');
     Route::delete('/movies/{movie}', [AdminMovieController::class, 'destroy'])->name('movies.destroy');
+    Route::delete('/movies/{movie}/reviews/{review}', [AdminMovieController::class, 'destroyReview'])->name('movies.reviews.destroy');
 
     // Kelola Bioskop & Studio
     Route::get('/cinemas', [CinemaController::class, 'index'])->name('cinemas.index');

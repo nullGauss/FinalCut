@@ -52,13 +52,6 @@
                             <input type="file" id="fotoInput" name="foto" accept="image/*" class="hidden" onchange="previewPhoto(this)">
                             <div class="flex items-center gap-2">
                                 <button type="button" onclick="document.getElementById('fotoInput').click()" class="btn btn-outline btn-sm">Pilih Foto</button>
-                                @if ($user->foto)
-                                    <form method="POST" action="{{ route('profile.photo.delete') }}" class="inline" onsubmit="return confirm('Hapus foto profil?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-xs text-red-600 hover:underline">Hapus</button>
-                                    </form>
-                                @endif
                             </div>
                             <span id="fileName" class="text-xs text-ink-secondary mt-1 block"></span>
                             <div id="uploadActions" class="hidden mt-2 flex gap-2">
@@ -67,6 +60,13 @@
                             </div>
                             @error('foto') <p class="error-text mt-1">{{ $message }}</p> @enderror
                         </form>
+                        @if ($user->foto)
+                            <form method="POST" action="{{ route('profile.photo.delete') }}" class="inline mt-2" onsubmit="return confirm('Hapus foto profil?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-xs text-red-600 hover:underline">Hapus Foto</button>
+                            </form>
+                        @endif
                     </div>
                 </div>
 

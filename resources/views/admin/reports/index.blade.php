@@ -100,6 +100,24 @@
             </div>
         </div>
 
+        <div class="grid lg:grid-cols-2 gap-8 mb-8">
+            <!-- Revenue by Cinema -->
+            <div class="card p-6">
+                <h3 class="font-display font-bold text-lg text-ink mb-4">Pendapatan per Bioskop</h3>
+                <div class="relative" style="height: 300px;">
+                    <canvas id="cinemaChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Booking Status Pie -->
+            <div class="card p-6">
+                <h3 class="font-display font-bold text-lg text-ink mb-4">Status Booking</h3>
+                <div class="relative" style="height: 300px;">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
         <!-- Tabel Rekap per Film -->
         <div class="card overflow-hidden mb-8">
             <div class="px-6 py-4 border-b-1.5 border-ink">
@@ -211,6 +229,11 @@
         const dailyData = @json($revenueByDate->values()->toArray());
         const movieLabels = @json($revenueByMovie->keys()->take(10)->toArray());
         const movieData = @json($revenueByMovie->values()->take(10)->pluck('revenue')->toArray());
+        const cinemaLabels = @json($revenueByCinema->keys()->toArray());
+        const cinemaData = @json($revenueByCinema->values()->pluck('revenue')->toArray());
+        const statusPaid = @json(\App\Models\Booking::where('status', 'paid')->count());
+        const statusPending = @json(\App\Models\Booking::where('status', 'pending')->count());
+        const statusCancelled = @json(\App\Models\Booking::where('status', 'cancelled')->count());
 
         // Daily Revenue Chart
         new Chart(document.getElementById('dailyChart'), {
@@ -275,6 +298,65 @@
                 },
                 plugins: {
                     legend: { display: false }
+                }
+            }
+        });
+
+        // Cinema Revenue Chart
+        new Chart(document.getElementById('cinemaChart'), {
+            type: 'bar',
+            data: {
+                labels: cinemaLabels,
+                datasets: [{
+                    label: 'Pendapatan (Rp)',
+                    data: cinemaData,
+                    backgroundColor: '#FBEBA0',
+                    borderColor: '#111111',
+                    borderWidth: 1.5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'Rp ' + value.toLocaleString('id-ID');
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Status Pie Chart
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Paid', 'Pending', 'Cancelled'],
+                datasets: [{
+                    data: [statusPaid, statusPending, statusCancelled],
+                    backgroundColor: ['#22C55E', '#EAB308', '#EF4444'],
+                    borderColor: '#111111',
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                        }
+                    }
                 }
             }
         });

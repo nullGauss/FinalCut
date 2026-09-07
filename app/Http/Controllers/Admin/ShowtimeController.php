@@ -81,9 +81,10 @@ class ShowtimeController extends Controller
 
     public function toggleActive(Showtime $showtime)
     {
-        $showtime->update(['is_active' => !$showtime->is_active]);
+        $newStatus = !$showtime->is_active;
+        $showtime->update(['is_active' => $newStatus]);
 
-        $status = $showtime->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        $status = $newStatus ? 'diaktifkan' : 'dinonaktifkan';
         return redirect()->route('admin.showtimes.index')->with('success', "Jadwal tayang {$status}.");
     }
 
