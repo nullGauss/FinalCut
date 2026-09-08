@@ -24,6 +24,11 @@
         @if (session('status') === 'email-change-cancelled')
             <div class="card-sm p-4 mb-6 bg-yellow-50 border-yellow-600 text-yellow-800">Perubahan email dibatalkan.</div>
         @endif
+        @if (session('status') === 'email-change-sent')
+            <div class="card-sm p-4 mb-6 bg-blue-50 border-blue-text text-blue-text">
+                Link verifikasi sudah dikirim ke <span class="font-medium">{{ session('pendingEmail') }}</span>. Cek inbox/kotak spam kamu.
+            </div>
+        @endif
         @if (session('status') === 'password-updated')
             <div class="card-sm p-4 mb-6 bg-green-50 border-green-600 text-green-800">Password berhasil diubah!</div>
         @endif

@@ -49,10 +49,9 @@ class EmailChangeController extends Controller
             'email' => $request->new_email,
         ]);
 
-        return view('profile.email-change-sent', [
-            'pendingEmail' => $request->new_email,
-            'verificationUrl' => $verificationUrl,
-        ]);
+        return redirect()->route('profile.settings')
+            ->with('status', 'email-change-sent')
+            ->with('pendingEmail', $request->new_email);
     }
 
     public function verify(Request $request): RedirectResponse

@@ -162,12 +162,13 @@
 </head>
 <body class="page-container font-body">
     <!-- Header -->
-    <header class="border-b border-ink bg-surface sticky top-0 z-50">
-        <div class="section flex items-center justify-between h-16">
+    <header class="border-b border-ink bg-surface sticky top-0 z-50" x-data="{ mobileOpen: false }">
+        <div class="section flex items-center justify-between h-14">
             <a href="/" class="flex items-center gap-2" aria-label="FinalCut Home">
                 <span class="font-display font-bold text-xl text-ink">FinalCut</span>
-                <span class="font-handwriting text-sm text-ink-secondary">film & ticket</span>
+                <span class="font-handwriting text-sm text-ink-secondary hidden sm:inline">film & ticket</span>
             </a>
+            <!-- Desktop Nav -->
             <nav class="hidden md:flex items-center gap-6">
                 @guest
                     <a href="{{ route('login') }}" class="btn btn-outline btn-sm">Log in</a>
@@ -182,6 +183,28 @@
                     </form>
                 @endguest
             </nav>
+            <!-- Mobile Hamburger -->
+            <button @click="mobileOpen = !mobileOpen" class="md:hidden p-2 border-1.5 border-ink rounded-md text-ink hover:bg-ink hover:text-surface transition-all">
+                <svg class="h-5 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                    <path :class="{'hidden': mobileOpen, 'inline-flex': !mobileOpen }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    <path :class="{'hidden': !mobileOpen, 'inline-flex': mobileOpen }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <!-- Mobile Nav Dropdown -->
+        <div :class="{'block': mobileOpen, 'hidden': !mobileOpen}" class="md:hidden border-t border-ink">
+            <div class="section py-4 space-y-3">
+                @guest
+                    <a href="{{ route('login') }}" class="btn btn-outline btn-sm w-full text-center">Log in</a>
+                    <a href="{{ route('register') }}" class="btn btn-primary btn-sm w-full text-center">Daftar</a>
+                @else
+                    <a href="{{ route('dashboard') }}" class="btn btn-outline btn-sm w-full text-center">Dashboard</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-outline btn-sm w-full text-center">Log Out</button>
+                    </form>
+                @endguest
+            </div>
         </div>
     </header>
 
@@ -189,16 +212,16 @@
         <!-- Hero Section -->
         <section class="section relative overflow-hidden">
             <div class="absolute inset-0 poster-placeholder opacity-5" aria-hidden="true"></div>
-            <div class="relative grid lg:grid-cols-2 gap-12 items-center">
-                <div class="hero-text">
-                    <span class="handwriting text-2xl text-ink-secondary mb-4 block">Selamat datang di</span>
-                    <h1 class="font-display font-bold text-5xl lg:text-6xl leading-tight text-ink mb-6">
+            <div class="relative grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+                <div class="hero-text text-center lg:text-left">
+                    <span class="handwriting text-xl sm:text-2xl text-ink-secondary mb-4 block">Selamat datang di</span>
+                    <h1 class="font-display font-bold text-4xl sm:text-5xl lg:text-6xl leading-tight text-ink mb-6">
                         Final<span class="text-blue-text">Cut</span>
                     </h1>
-                    <p class="text-lg text-ink-secondary mb-8 max-w-xl">
+                    <p class="text-base sm:text-lg text-ink-secondary mb-8 max-w-xl mx-auto lg:mx-0">
                         Temukan film favoritmu, baca & tulis ulasan dari komunitas penonton, lalu booking tiket bioskop langsung dari satu platform. Nonton jadi lebih mudah.
                     </p>
-                    <div class="flex flex-wrap gap-4">
+                    <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
                         <a href="{{ route('register') }}" class="btn btn-primary btn-lg">
                             Mulai Gratis
                         </a>
@@ -209,23 +232,23 @@
                 </div>
 
                 <!-- Cinema Ticket CSS Art -->
-                <div class="hero-ticket relative flex justify-center items-center py-4">
-                    <div class="relative">
+                <div class="hero-ticket relative flex justify-center items-center py-4 overflow-hidden">
+                    <div class="relative w-full max-w-[420px]">
                         <!-- Main Ticket -->
-                        <div class="w-[420px] bg-surface border-1.5 border-ink shadow-hard-xl overflow-hidden">
+                        <div class="w-full bg-surface border-1.5 border-ink shadow-hard-xl overflow-hidden">
                             <!-- Ticket Header -->
-                            <div class="bg-ink text-surface px-10 py-5 flex items-center justify-between">
-                                <span class="font-display font-bold text-3xl tracking-tight">FinalCut</span>
-                                <span class="handwriting text-lg opacity-80">e-tiket</span>
+                            <div class="bg-ink text-surface px-6 sm:px-10 py-4 sm:py-5 flex items-center justify-between">
+                                <span class="font-display font-bold text-2xl sm:text-3xl tracking-tight">FinalCut</span>
+                                <span class="handwriting text-sm sm:text-lg opacity-80">e-tiket</span>
                             </div>
                             <!-- Perforated Line -->
-                            <div class="border-b-2 border-dashed border-ink/30 mx-6"></div>
+                            <div class="border-b-2 border-dashed border-ink/30 mx-4 sm:mx-6"></div>
                             <!-- Ticket Body -->
-                            <div class="px-10 py-8">
+                            <div class="px-6 sm:px-10 py-6 sm:py-8">
                                 <div class="flex items-start justify-between mb-6">
                                     <div>
                                         <div class="handwriting text-base text-ink-secondary mb-1">Film</div>
-                                        <div class="font-display font-bold text-3xl text-ink leading-tight">Midnight Signals</div>
+                                        <div class="font-display font-bold text-2xl sm:text-3xl text-ink leading-tight">Midnight Signals</div>
                                     </div>
                                     <div class="text-right">
                                         <div class="handwriting text-base text-ink-secondary mb-1">Rating</div>
@@ -262,14 +285,14 @@
                             </div>
                         </div>
 
-                        <!-- Floating Mini Cards -->
-                        <div class="floating-card absolute -top-5 -right-12 bg-surface border-1.5 border-ink shadow-hard-lg px-5 py-3 rounded-lg">
+                        <!-- Floating Mini Cards (hidden on mobile) -->
+                        <div class="floating-card absolute -top-5 -right-12 bg-surface border-1.5 border-ink shadow-hard-lg px-5 py-3 rounded-lg hidden sm:block">
                             <div class="flex items-center gap-2">
                                 <svg class="w-5 h-5 text-blue-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
                                 <span class="font-display font-bold text-sm text-ink">+Watchlist</span>
                             </div>
                         </div>
-                        <div class="floating-card absolute -bottom-4 -left-10 bg-surface border-1.5 border-ink shadow-hard-lg px-5 py-3 rounded-lg">
+                        <div class="floating-card absolute -bottom-4 -left-10 bg-surface border-1.5 border-ink shadow-hard-lg px-5 py-3 rounded-lg hidden sm:block">
                             <div class="flex items-center gap-2">
                                 <span class="text-yellow-500 text-lg">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
                                 <span class="font-display font-bold text-sm text-ink">5/5</span>
@@ -283,12 +306,12 @@
         <!-- Features -->
         <section class="section">
             <div data-anim="fade-up">
-                <h2 class="font-display font-bold text-3xl text-center mb-4">Dua Pilar Utama</h2>
+                <h2 class="font-display font-bold text-2xl sm:text-3xl text-center mb-4">Dua Pilar Utama</h2>
                 <p class="text-center text-ink-secondary mb-12 max-w-xl mx-auto">FinalCut menggabungkan dua kebutuhan penonton dalam satu platform: riset film dan booking tiket.</p>
             </div>
             <div class="grid md:grid-cols-2 gap-8" data-stagger>
                 <!-- Cinephile Pillar -->
-                <article class="card card-hover p-8">
+                <article class="card card-hover p-6 sm:p-8">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-12 h-12 bg-blue-bg text-blue-text rounded-full flex items-center justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,7 +333,7 @@
                 </article>
 
                 <!-- Booking Pillar -->
-                <article class="card card-hover p-8">
+                <article class="card card-hover p-6 sm:p-8">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-12 h-12 bg-yellow-bg text-yellow-text rounded-full flex items-center justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -336,7 +359,7 @@
         <!-- How It Works -->
         <section class="section bg-surface border-y border-ink">
             <div data-anim="fade-up">
-                <h2 class="font-display font-bold text-3xl text-center mb-4">Cara Kerja</h2>
+                <h2 class="font-display font-bold text-2xl sm:text-3xl text-center mb-4">Cara Kerja</h2>
                 <p class="text-center text-ink-secondary mb-12 max-w-xl mx-auto">Tiga langkah mudah dari cari film sampai nonton di bioskop.</p>
             </div>
             <div class="grid md:grid-cols-3 gap-8" data-stagger>
@@ -375,7 +398,7 @@
         @if ($latestReviews->count() > 0)
             <section class="section">
                 <div data-anim="fade-up">
-                    <h2 class="font-display font-bold text-3xl text-center mb-4">Ulasan Terbaru</h2>
+                    <h2 class="font-display font-bold text-2xl sm:text-3xl text-center mb-4">Ulasan Terbaru</h2>
                     <p class="handwriting text-center text-ink-secondary mb-12">ulasan dari sesama penonton~</p>
                 </div>
                 <div class="grid md:grid-cols-3 gap-6">
@@ -409,24 +432,24 @@
                 $statReviews = \App\Models\Review::count();
                 $statBookings = \App\Models\Booking::where('status', 'paid')->count();
             @endphp
-            <div class="section flex items-center justify-center gap-8 md:gap-16 py-5" data-stagger>
+            <div class="section flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-16 py-5" data-stagger>
                 <div class="stat-item text-center">
-                    <div class="font-display font-bold text-xl text-ink stat-number" data-target="{{ $statMovies }}">0</div>
+                    <div class="font-display font-bold text-lg sm:text-xl text-ink stat-number" data-target="{{ $statMovies }}">0</div>
                     <div class="text-xs text-ink-secondary">Film</div>
                 </div>
-                <span class="text-gray-300 stat-item">/</span>
+                <span class="text-gray-300 stat-item hidden sm:inline">/</span>
                 <div class="stat-item text-center">
-                    <div class="font-display font-bold text-xl text-ink stat-number" data-target="{{ $statUsers }}">0</div>
+                    <div class="font-display font-bold text-lg sm:text-xl text-ink stat-number" data-target="{{ $statUsers }}">0</div>
                     <div class="text-xs text-ink-secondary">Member</div>
                 </div>
-                <span class="text-gray-300 stat-item">/</span>
+                <span class="text-gray-300 stat-item hidden sm:inline">/</span>
                 <div class="stat-item text-center">
-                    <div class="font-display font-bold text-xl text-ink stat-number" data-target="{{ $statReviews }}">0</div>
+                    <div class="font-display font-bold text-lg sm:text-xl text-ink stat-number" data-target="{{ $statReviews }}">0</div>
                     <div class="text-xs text-ink-secondary">Ulasan</div>
                 </div>
-                <span class="text-gray-300 stat-item">/</span>
+                <span class="text-gray-300 stat-item hidden sm:inline">/</span>
                 <div class="stat-item text-center">
-                    <div class="font-display font-bold text-xl text-ink stat-number" data-target="{{ $statBookings }}">0</div>
+                    <div class="font-display font-bold text-lg sm:text-xl text-ink stat-number" data-target="{{ $statBookings }}">0</div>
                     <div class="text-xs text-ink-secondary">Tiket Terjual</div>
                 </div>
             </div>
@@ -434,7 +457,7 @@
 
         <!-- CTA -->
         <section class="section text-center border-t border-ink cta-section" data-anim="fade-up">
-            <h2 class="font-display font-bold text-3xl mb-4">Siap Nonton & Review?</h2>
+            <h2 class="font-display font-bold text-2xl sm:text-3xl mb-4">Siap Nonton & Review?</h2>
             <p class="text-ink-secondary mb-8 max-w-2xl mx-auto">
                 Gabung komunitas penonton Indonesia yang sudah pakai FinalCut untuk cari film favorit & booking tiket bioskop dalam satu app.
             </p>
