@@ -86,12 +86,6 @@
         @apply badge bg-red-100 text-red-800 border border-red-600;
     }
 
-    /* Obi strip (vertical label) */
-.obi-strip {
-    @apply absolute -right-4 top-1/2 -translate-y-1/2 rotate-90 transform origin-center;
-    @apply bg-ink text-surface text-xs font-medium font-display px-2 py-1 whitespace-nowrap;
-}
-
     /* Poster placeholder diagonal lines */
     .poster-placeholder {
         @apply relative bg-gray-100 overflow-hidden;

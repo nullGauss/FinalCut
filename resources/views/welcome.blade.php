@@ -9,6 +9,156 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=Indie+Flower&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+    <style>
+        html.lenis, html.lenis body {
+            height: auto;
+        }
+        .lenis.lenis-smooth {
+            scroll-behavior: auto !important;
+        }
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+        .lenis.lenis-stopped {
+            overflow: hidden;
+        }
+        /* ===== Welcome Animations ===== */
+        [data-anim] {
+            opacity: 0;
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        [data-anim="fade-up"] {
+            transform: translateY(32px);
+        }
+        [data-anim="fade-down"] {
+            transform: translateY(-32px);
+        }
+        [data-anim="fade-left"] {
+            transform: translateX(-40px);
+        }
+        [data-anim="fade-right"] {
+            transform: translateX(40px);
+        }
+        [data-anim="scale-in"] {
+            transform: scale(0.9);
+        }
+        [data-anim].is-visible {
+            opacity: 1;
+            transform: translateY(0) translateX(0) scale(1);
+        }
+
+        /* Hero entrance */
+        .hero-text {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .hero-text.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .hero-ticket {
+            opacity: 0;
+            transform: translateX(40px) rotate(2deg);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .hero-ticket.is-visible {
+            opacity: 1;
+            transform: translateX(0) rotate(0deg);
+        }
+
+        /* Floating cards */
+        .floating-card {
+            animation: float-bob 3s ease-in-out infinite alternate;
+        }
+        @keyframes float-bob {
+            0%   { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+
+        /* Staggered children */
+        [data-stagger] > * {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        [data-stagger].is-visible > *:nth-child(1) { transition-delay: 0s; }
+        [data-stagger].is-visible > *:nth-child(2) { transition-delay: 0.12s; }
+        [data-stagger].is-visible > *:nth-child(3) { transition-delay: 0.24s; }
+        [data-stagger].is-visible > *:nth-child(4) { transition-delay: 0.36s; }
+        [data-stagger].is-visible > * {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Step number pulse */
+        .step-circle {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .step-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 3px 3px 0 #111111;
+        }
+
+        /* Card hover lift */
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 4px 4px 0 #111111;
+        }
+
+        /* Review card slide in */
+        .review-card {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .review-card.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .review-card.is-visible:nth-child(1) { transition-delay: 0s; }
+        .review-card.is-visible:nth-child(2) { transition-delay: 0.15s; }
+        .review-card.is-visible:nth-child(3) { transition-delay: 0.3s; }
+
+        /* Stats pop in */
+        .stat-item {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .stat-item.is-visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .stat-item.is-visible:nth-child(1) { transition-delay: 0s; }
+        .stat-item.is-visible:nth-child(3) { transition-delay: 0.1s; }
+        .stat-item.is-visible:nth-child(5) { transition-delay: 0.2s; }
+        .stat-item.is-visible:nth-child(7) { transition-delay: 0.3s; }
+
+        /* CTA bounce in */
+        .cta-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .cta-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .cta-section.is-visible .btn {
+            animation: cta-pop 0.5s ease 0.4s both;
+        }
+        @keyframes cta-pop {
+            0%   { transform: scale(0.9); opacity: 0; }
+            60%  { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+    </style>
 </head>
 <body class="page-container font-body">
     <!-- Header -->
@@ -40,7 +190,7 @@
         <section class="section relative overflow-hidden">
             <div class="absolute inset-0 poster-placeholder opacity-5" aria-hidden="true"></div>
             <div class="relative grid lg:grid-cols-2 gap-12 items-center">
-                <div>
+                <div class="hero-text">
                     <span class="handwriting text-2xl text-ink-secondary mb-4 block">Selamat datang di</span>
                     <h1 class="font-display font-bold text-5xl lg:text-6xl leading-tight text-ink mb-6">
                         Final<span class="text-blue-text">Cut</span>
@@ -59,7 +209,7 @@
                 </div>
 
                 <!-- Cinema Ticket CSS Art -->
-                <div class="relative flex justify-center items-center py-4">
+                <div class="hero-ticket relative flex justify-center items-center py-4">
                     <div class="relative">
                         <!-- Main Ticket -->
                         <div class="w-[420px] bg-surface border-1.5 border-ink shadow-hard-xl overflow-hidden">
@@ -110,18 +260,16 @@
                                     @endfor
                                 </div>
                             </div>
-                            <!-- Obi Strip -->
-                            <div class="obi-strip">FinalCut</div>
                         </div>
 
                         <!-- Floating Mini Cards -->
-                        <div class="absolute -top-5 -right-12 bg-surface border-1.5 border-ink shadow-hard-lg px-5 py-3 rounded-lg">
+                        <div class="floating-card absolute -top-5 -right-12 bg-surface border-1.5 border-ink shadow-hard-lg px-5 py-3 rounded-lg">
                             <div class="flex items-center gap-2">
                                 <svg class="w-5 h-5 text-blue-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
                                 <span class="font-display font-bold text-sm text-ink">+Watchlist</span>
                             </div>
                         </div>
-                        <div class="absolute -bottom-4 -left-10 bg-surface border-1.5 border-ink shadow-hard-lg px-5 py-3 rounded-lg">
+                        <div class="floating-card absolute -bottom-4 -left-10 bg-surface border-1.5 border-ink shadow-hard-lg px-5 py-3 rounded-lg">
                             <div class="flex items-center gap-2">
                                 <span class="text-yellow-500 text-lg">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
                                 <span class="font-display font-bold text-sm text-ink">5/5</span>
@@ -134,11 +282,13 @@
 
         <!-- Features -->
         <section class="section">
-            <h2 class="font-display font-bold text-3xl text-center mb-4">Dua Pilar Utama</h2>
-            <p class="text-center text-ink-secondary mb-12 max-w-xl mx-auto">FinalCut menggabungkan dua kebutuhan penonton dalam satu platform: riset film dan booking tiket.</p>
-            <div class="grid md:grid-cols-2 gap-8">
+            <div data-anim="fade-up">
+                <h2 class="font-display font-bold text-3xl text-center mb-4">Dua Pilar Utama</h2>
+                <p class="text-center text-ink-secondary mb-12 max-w-xl mx-auto">FinalCut menggabungkan dua kebutuhan penonton dalam satu platform: riset film dan booking tiket.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8" data-stagger>
                 <!-- Cinephile Pillar -->
-                <article class="card p-8 hover:shadow-hard-lg transition-shadow">
+                <article class="card card-hover p-8">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-12 h-12 bg-blue-bg text-blue-text rounded-full flex items-center justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -160,7 +310,7 @@
                 </article>
 
                 <!-- Booking Pillar -->
-                <article class="card p-8 hover:shadow-hard-lg transition-shadow">
+                <article class="card card-hover p-8">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-12 h-12 bg-yellow-bg text-yellow-text rounded-full flex items-center justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -185,25 +335,27 @@
 
         <!-- How It Works -->
         <section class="section bg-surface border-y border-ink">
-            <h2 class="font-display font-bold text-3xl text-center mb-4">Cara Kerja</h2>
-            <p class="text-center text-ink-secondary mb-12 max-w-xl mx-auto">Tiga langkah mudah dari cari film sampai nonton di bioskop.</p>
-            <div class="grid md:grid-cols-3 gap-8">
+            <div data-anim="fade-up">
+                <h2 class="font-display font-bold text-3xl text-center mb-4">Cara Kerja</h2>
+                <p class="text-center text-ink-secondary mb-12 max-w-xl mx-auto">Tiga langkah mudah dari cari film sampai nonton di bioskop.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8" data-stagger>
                 <div class="text-center">
-                    <div class="w-14 h-14 border-1.5 border-ink rounded-full flex items-center justify-center mx-auto mb-4 bg-blue-bg">
+                    <div class="step-circle w-14 h-14 border-1.5 border-ink rounded-full flex items-center justify-center mx-auto mb-4 bg-blue-bg cursor-pointer">
                         <span class="font-display font-bold text-xl text-blue-text">1</span>
                     </div>
                     <h4 class="font-display font-bold text-lg mb-2">Cari & Pilih Film</h4>
                     <p class="text-sm text-ink-secondary">Browse film yang sedang tayang, baca ulasan komunitas, cek rating & sinopsis sebelum memutuskan.</p>
                 </div>
                 <div class="text-center">
-                    <div class="w-14 h-14 border-1.5 border-ink rounded-full flex items-center justify-center mx-auto mb-4 bg-yellow-bg">
+                    <div class="step-circle w-14 h-14 border-1.5 border-ink rounded-full flex items-center justify-center mx-auto mb-4 bg-yellow-bg cursor-pointer">
                         <span class="font-display font-bold text-xl text-yellow-text">2</span>
                     </div>
                     <h4 class="font-display font-bold text-lg mb-2">Booking Tiket</h4>
                     <p class="text-sm text-ink-secondary">Pilih bioskop, jadwal tayang, & kursi favoritmu lewat seat map interaktif. Bayar dalam beberapa langkah.</p>
                 </div>
                 <div class="text-center">
-                    <div class="w-14 h-14 border-1.5 border-ink rounded-full flex items-center justify-center mx-auto mb-4 bg-blue-bg">
+                    <div class="step-circle w-14 h-14 border-1.5 border-ink rounded-full flex items-center justify-center mx-auto mb-4 bg-blue-bg cursor-pointer">
                         <span class="font-display font-bold text-xl text-blue-text">3</span>
                     </div>
                     <h4 class="font-display font-bold text-lg mb-2">Nonton & Review</h4>
@@ -222,11 +374,13 @@
         @endphp
         @if ($latestReviews->count() > 0)
             <section class="section">
-                <h2 class="font-display font-bold text-3xl text-center mb-4">Ulasan Terbaru</h2>
-                <p class="handwriting text-center text-ink-secondary mb-12">ulasan dari sesama penonton~</p>
+                <div data-anim="fade-up">
+                    <h2 class="font-display font-bold text-3xl text-center mb-4">Ulasan Terbaru</h2>
+                    <p class="handwriting text-center text-ink-secondary mb-12">ulasan dari sesama penonton~</p>
+                </div>
                 <div class="grid md:grid-cols-3 gap-6">
                     @foreach ($latestReviews as $review)
-                        <div class="card p-6 hover:shadow-hard-lg transition-shadow">
+                        <div class="review-card card card-hover p-6" data-anim="fade-up">
                             <div class="flex items-center gap-2 mb-3">
                                 @for ($i = 1; $i <= 5; $i++)
                                     @if ($i <= $review->rating)
@@ -249,37 +403,37 @@
 
         <!-- Stats Strip -->
         <section class="border-y border-ink bg-surface">
-            <div class="section flex items-center justify-center gap-8 md:gap-16 py-5">
-                @php
-                    $statMovies = \App\Models\Movie::count();
-                    $statUsers = \App\Models\User::where('role', 'user')->count();
-                    $statReviews = \App\Models\Review::count();
-                    $statBookings = \App\Models\Booking::where('status', 'paid')->count();
-                @endphp
-                <div class="text-center">
-                    <div class="font-display font-bold text-xl text-ink">{{ $statMovies }}</div>
+            @php
+                $statMovies = \App\Models\Movie::count();
+                $statUsers = \App\Models\User::where('role', 'user')->count();
+                $statReviews = \App\Models\Review::count();
+                $statBookings = \App\Models\Booking::where('status', 'paid')->count();
+            @endphp
+            <div class="section flex items-center justify-center gap-8 md:gap-16 py-5" data-stagger>
+                <div class="stat-item text-center">
+                    <div class="font-display font-bold text-xl text-ink stat-number" data-target="{{ $statMovies }}">0</div>
                     <div class="text-xs text-ink-secondary">Film</div>
                 </div>
-                <span class="text-gray-300">/</span>
-                <div class="text-center">
-                    <div class="font-display font-bold text-xl text-ink">{{ $statUsers }}</div>
+                <span class="text-gray-300 stat-item">/</span>
+                <div class="stat-item text-center">
+                    <div class="font-display font-bold text-xl text-ink stat-number" data-target="{{ $statUsers }}">0</div>
                     <div class="text-xs text-ink-secondary">Member</div>
                 </div>
-                <span class="text-gray-300">/</span>
-                <div class="text-center">
-                    <div class="font-display font-bold text-xl text-ink">{{ $statReviews }}</div>
+                <span class="text-gray-300 stat-item">/</span>
+                <div class="stat-item text-center">
+                    <div class="font-display font-bold text-xl text-ink stat-number" data-target="{{ $statReviews }}">0</div>
                     <div class="text-xs text-ink-secondary">Ulasan</div>
                 </div>
-                <span class="text-gray-300">/</span>
-                <div class="text-center">
-                    <div class="font-display font-bold text-xl text-ink">{{ $statBookings }}</div>
+                <span class="text-gray-300 stat-item">/</span>
+                <div class="stat-item text-center">
+                    <div class="font-display font-bold text-xl text-ink stat-number" data-target="{{ $statBookings }}">0</div>
                     <div class="text-xs text-ink-secondary">Tiket Terjual</div>
                 </div>
             </div>
         </section>
 
         <!-- CTA -->
-        <section class="section text-center border-t border-ink">
+        <section class="section text-center border-t border-ink cta-section" data-anim="fade-up">
             <h2 class="font-display font-bold text-3xl mb-4">Siap Nonton & Review?</h2>
             <p class="text-ink-secondary mb-8 max-w-2xl mx-auto">
                 Gabung komunitas penonton Indonesia yang sudah pakai FinalCut untuk cari film favorit & booking tiket bioskop dalam satu app.
@@ -290,5 +444,7 @@
 
     <!-- Footer -->
     @include('components.footer')
+
+    <script src="{{ asset('js/welcome.js') }}"></script>
 </body>
 </html>

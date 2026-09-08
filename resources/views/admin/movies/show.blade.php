@@ -125,17 +125,12 @@
                                 </div>
 
                                 <!-- Delete Button -->
-                                <form action="{{ route('admin.movies.reviews.destroy', [$movie, $review]) }}"
-                                      method="POST"
-                                      onsubmit="return confirm('Hapus ulasan ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm border-red-600 text-red-600 hover:bg-red-600 hover:text-white flex-shrink-0" title="Hapus Ulasan">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </form>
+                                <button type="button" onclick="openDeleteReviewModal({{ $review->id }})"
+                                        class="btn btn-sm border-red-600 text-red-600 hover:bg-red-600 hover:text-white flex-shrink-0" title="Hapus Ulasan">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                     @endforeach
@@ -147,4 +142,60 @@
             @endif
         </div>
     </div>
+
+    <!-- Delete Review Modal -->
+    <div id="deleteReviewModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-ink/50" onclick="closeDeleteReviewModal()"></div>
+        <div class="absolute inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-sm bg-surface border-1.5 border-ink shadow-hard-lg rounded-xl overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b-1.5 border-ink">
+                <h2 class="font-display font-bold text-lg text-ink">Hapus Ulasan?</h2>
+                <button onclick="closeDeleteReviewModal()" class="text-ink-secondary hover:text-ink">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-full bg-red-50 border-1.5 border-red-600 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    </div>
+                    <div>
+                        <p class="text-sm text-ink">Ulasan ini akan dihapus permanen.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeDeleteReviewModal()" class="btn btn-outline btn-sm flex-1">Batal</button>
+                    <button onclick="submitDeleteReview()" class="btn btn-sm border-red-600 text-red-600 hover:bg-red-600 hover:text-white flex-1">Ya, Hapus</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @push('scripts')
+    <script>
+        let deleteReviewId = null;
+
+        function openDeleteReviewModal(reviewId) {
+            deleteReviewId = reviewId;
+            document.getElementById('deleteReviewModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDeleteReviewModal() {
+            document.getElementById('deleteReviewModal').classList.add('hidden');
+            document.body.style.overflow = '';
+            deleteReviewId = null;
+        }
+
+        function submitDeleteReview() {
+            if (deleteReviewId) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ url("admin/movies/{$movie->id}/reviews") }}/' + deleteReviewId;
+                form.innerHTML = '@csrf @method('DELETE')';
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+    @endpush
 </x-app-layout>
